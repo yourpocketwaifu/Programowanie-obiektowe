@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notatka K2 — Java Serwery 🐱</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --pink-bg:    #FFF0F5;
+    --pink-soft:  #FFD6E7;
+    --pink-mid:   #FFB3CD;
+    --pink-vivid: #FF69B4;
+    --pink-deep:  #D63384;
+    --pink-dark:  #8B1A4A;
+    --code-bg:    #1E1030;
+    --code-fg:    #F8F8F2;
+    --keyword:    #FF79C6;
+    --string:     #F1FA8C;
+    --comment:    #6272A4;
+    --type:       #8BE9FD;
+    --number:     #BD93F9;
+    --method:     #50FA7B;
+    --card-bg:    #FFFFFF;
+    --text:       #3B1E2E;
+    --text-light: #7A4A5E;
+    --border:     #F0C0D8;
+    --shadow:     rgba(214, 51, 132, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--pink-bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #FF69B4 0%, #D63384 40%, #8B1A4A 100%);
+    color: white;
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,182,193,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 50%);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+  .hero-cat { font-size: 64px; margin-bottom: 12px; display: block; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .hero h1 {
+    font-size: 2.6rem; font-weight: 800;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 1.1rem; margin-top: 12px;
+    opacity: 0.9; font-weight: 600;
+  }
+  .hero-tags { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .tag {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 0.3px;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; max-width: 1100px; margin: 0 auto; gap: 28px; padding: 36px 24px; }
+
+  /* ── NAV ── */
+  .nav {
+    width: 220px; flex-shrink: 0;
+  }
+  .nav-sticky {
+    position: sticky; top: 24px;
+    background: white;
+    border-radius: 18px;
+    padding: 20px 16px;
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1.5px solid var(--border);
+  }
+  .nav-title {
+    font-size: 0.75rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--pink-deep); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav a {
+    display: block; padding: 7px 10px; border-radius: 10px;
+    color: var(--text-light); text-decoration: none;
+    font-size: 0.85rem; font-weight: 600;
+    transition: all 0.2s; margin-bottom: 2px;
+  }
+  .nav a:hover, .nav a.active {
+    background: var(--pink-soft);
+    color: var(--pink-deep);
+    padding-left: 14px;
+  }
+  .nav-num {
+    display: inline-block; width: 20px; height: 20px;
+    background: var(--pink-soft); color: var(--pink-deep);
+    border-radius: 50%; font-size: 0.7rem; font-weight: 800;
+    text-align: center; line-height: 20px; margin-right: 6px;
+  }
+
+  /* ── CONTENT ── */
+  .content { flex: 1; min-width: 0; }
+
+  /* ── SECTION CARD ── */
+  .section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1.5px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: linear-gradient(180deg, var(--pink-vivid), var(--pink-deep));
+    border-radius: 20px 0 0 20px;
+  }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 2px dashed var(--pink-mid);
+  }
+  .section-num {
+    width: 42px; height: 42px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--pink-vivid), var(--pink-deep));
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 800;
+    box-shadow: 0 3px 10px rgba(214,51,132,0.35);
+  }
+  .section-title { font-size: 1.4rem; font-weight: 800; color: var(--pink-dark); }
+  .section-sub { font-size: 0.85rem; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+
+  /* ── TEXT ── */
+  p { margin-bottom: 14px; font-size: 0.98rem; }
+  h3 { color: var(--pink-deep); font-size: 1.05rem; margin: 22px 0 8px; font-weight: 800; }
+  h3::before { content: '✿ '; font-size: 0.9rem; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: 14px; padding: 14px 18px; margin: 16px 0;
+    font-size: 0.92rem; font-weight: 600; display: flex; gap: 12px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .callout.tip  { background: #FFF0F5; border: 1.5px solid var(--pink-mid); color: var(--pink-dark); }
+  .callout.warn { background: #FFF8E1; border: 1.5px solid #FFD54F; color: #6D4C00; }
+  .callout.info { background: #E8F4FD; border: 1.5px solid #90CAF9; color: #0D47A1; }
+  .callout.good { background: #E8F5E9; border: 1.5px solid #A5D6A7; color: #1B5E20; }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: var(--code-bg);
+    border-radius: 14px;
+    margin: 16px 0;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(30,16,48,0.35);
+    border: 1px solid rgba(255,121,198,0.2);
+  }
+  .code-header {
+    background: rgba(255,255,255,0.07);
+    padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .code-lang {
+    font-size: 0.75rem; font-weight: 700; color: var(--pink-vivid);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dots span:nth-child(1){background:#FF5F57}
+  .code-dots span:nth-child(2){background:#FFBD2E}
+  .code-dots span:nth-child(3){background:#28C840}
+
+  pre {
+    padding: 20px 22px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--code-fg);
+  }
+  pre .kw   { color: var(--keyword); font-weight: 600; }
+  pre .str  { color: var(--string); }
+  pre .cmt  { color: var(--comment); font-style: italic; }
+  pre .typ  { color: var(--type); }
+  pre .num  { color: var(--number); }
+  pre .met  { color: var(--method); }
+  pre .cls  { color: #FFB86C; font-weight: 600; }
+
+  /* ── STEPS ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex; gap: 16px; margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    counter-increment: step;
+    width: 30px; height: 30px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--pink-mid), var(--pink-vivid));
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; margin-top: 2px;
+  }
+  .step-num::before { content: counter(step); }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 800; color: var(--pink-dark); font-size: 0.97rem; margin-bottom: 4px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th {
+    background: linear-gradient(135deg, var(--pink-vivid), var(--pink-deep));
+    color: white; padding: 10px 14px; text-align: left;
+    font-weight: 800; font-size: 0.82rem; letter-spacing: 0.3px;
+  }
+  th:first-child { border-radius: 12px 0 0 0; }
+  th:last-child  { border-radius: 0 12px 0 0; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--pink-bg); }
+  td code { background: var(--pink-soft); color: var(--pink-dark); padding: 2px 7px; border-radius: 5px; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* ── INLINE CODE ── */
+  :not(pre) > code {
+    background: var(--pink-soft);
+    color: var(--pink-dark);
+    padding: 2px 7px; border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em; font-weight: 600;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 6px 0 6px 28px;
+    position: relative; font-size: 0.93rem;
+    border-bottom: 1px dashed var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '✦';
+    position: absolute; left: 0; color: var(--pink-vivid); font-size: 0.9rem;
+  }
+  .checklist li strong { color: var(--pink-dark); }
+
+  /* ── PRIORITY BADGE ── */
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 800; margin-left: 8px;
+    vertical-align: middle; letter-spacing: 0.3px;
+  }
+  .badge.crit { background: #FFD6E7; color: #8B1A4A; }
+  .badge.imp  { background: #FFF3CD; color: #664D03; }
+  .badge.nice { background: #D1E7DD; color: #0A3622; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 40px 24px;
+    color: var(--text-light); font-size: 0.88rem; font-weight: 600;
+  }
+  footer .heart { color: var(--pink-vivid); font-size: 1.1rem; }
+
+  /* responsive */
+  @media(max-width:768px){
+    .layout{flex-direction:column}
+    .nav{width:100%}
+    .nav-sticky{position:static}
+    .hero h1{font-size:1.8rem}
+    .section{padding:22px 18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="hero-cat">🐱</span>
+    <h1>Notatka do Kolokwium 2<br>Programowanie Obiektowe Java</h1>
+    <p>Tutorial dla początkującego · od zera do serwera TCP</p>
+    <div class="hero-tags">
+      <span class="tag">ServerSocket</span>
+      <span class="tag">Wielowątkowość</span>
+      <span class="tag">SQLite</span>
+      <span class="tag">JavaFX</span>
+      <span class="tag">Swing</span>
+      <span class="tag">JUnit 5</span>
+      <span class="tag">Enum</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-sticky">
+      <div class="nav-title">🐾 Spis treści</div>
+      <a href="#s1"><span class="nav-num">1</span>Serwer TCP</a>
+      <a href="#s2"><span class="nav-num">2</span>ClientHandler</a>
+      <a href="#s3"><span class="nav-num">3</span>Wielowątkowość</a>
+      <a href="#s4"><span class="nav-num">4</span>SQLite & JDBC</a>
+      <a href="#s5"><span class="nav-num">5</span>JavaFX</a>
+      <a href="#s6"><span class="nav-num">6</span>Enum z metodami</a>
+      <a href="#s7"><span class="nav-num">7</span>Interfejsy funkcyjne</a>
+      <a href="#s8"><span class="nav-num">8</span>JUnit 5</a>
+      <a href="#s9"><span class="nav-num">9</span>Gotowy schemat</a>
+      <a href="#s11"><span class="nav-num">10</span>Swing GUI</a>
+      <a href="#s10"><span class="nav-num">✦</span>Co powtórzyć</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 1: ServerSocket -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div>
+          <div class="section-title">Jak działa serwer TCP? 🌐</div>
+          <div class="section-sub">ServerSocket — serce każdego kolokwium</div>
+        </div>
+      </div>
+
+      <p>Wyobraź sobie serwer jak recepcjonistę w hotelu. Siedzi przy ladzie i <strong>czeka na gości</strong>. Gdy ktoś wchodzi, recepcjonista go rejestruje i oddaje mu klucz. W Javie to działa tak samo:</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div><strong>ServerSocket</strong> = recepcjonista czekający na gości<br>
+        <strong>Socket</strong> = połączenie z jednym konkretnym gościem<br>
+        <strong>accept()</strong> = moment kiedy gość wchodzi — metoda blokuje się do tego czasu</div>
+      </div>
+
+      <h3>Minimalna klasa Server</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Server.java</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Server</span> {
+
+    <span class="kw">private static final int</span> <span class="num">PORT</span> = <span class="num">12345</span>;
+
+    <span class="kw">public void</span> <span class="met">listen</span>() {
+        <span class="kw">try</span> (<span class="typ">ServerSocket</span> serverSocket = <span class="kw">new</span> <span class="typ">ServerSocket</span>(<span class="num">PORT</span>)) {
+            <span class="cmt">// Serwer nasłuchuje w nieskończoność</span>
+            <span class="kw">while</span> (<span class="kw">true</span>) {
+                <span class="cmt">// accept() BLOKUJE się tu — czeka aż ktoś się połączy</span>
+                <span class="typ">Socket</span> clientSocket = serverSocket.<span class="met">accept</span>();
+                System.out.<span class="met">println</span>(<span class="str">"Nowy klient się połączył!"</span>);
+
+                <span class="cmt">// Tutaj obsłużymy klienta (sekcja 2)</span>
+            }
+        } <span class="kw">catch</span> (<span class="typ">IOException</span> e) {
+            e.<span class="met">printStackTrace</span>();
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="met">main</span>(<span class="typ">String</span>[] args) {
+        <span class="kw">new</span> <span class="cls">Server</span>().<span class="met">listen</span>();
+    }
+}</pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>Numer portu może być dowolny (np. 12345), ale musi być ten sam po stronie serwera i klienta. Porty poniżej 1024 są zarezerwowane przez system.</div>
+      </div>
+
+      <h3>Jak klient się łączy (do testów)</h3>
+      <p>Możesz przetestować serwer w terminalu bez pisania klienta:</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Terminal</span>
+        </div>
+        <pre><span class="cmt"># Linux/Mac:</span>
+nc localhost <span class="num">12345</span>
+
+<span class="cmt"># Albo napisz prostego klienta testowego:</span>
+<span class="typ">Socket</span> s = <span class="kw">new</span> <span class="typ">Socket</span>(<span class="str">"localhost"</span>, <span class="num">12345</span>);
+<span class="typ">PrintWriter</span> out = <span class="kw">new</span> <span class="typ">PrintWriter</span>(s.<span class="met">getOutputStream</span>(), <span class="kw">true</span>);
+out.<span class="met">println</span>(<span class="str">"Hejka serwerze!"</span>);</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 2: ClientHandler -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div>
+          <div class="section-title">ClientHandler — obsługa jednego klienta 📬</div>
+          <div class="section-sub">Jak czytać i wysyłać wiadomości przez sieć</div>
+        </div>
+      </div>
+
+      <p>Po przyjęciu klienta serwer dostaje obiekt <code>Socket</code>. Z tego socketu możemy wyciągnąć <strong>strumień wejściowy</strong> (co klient do nas wysyła) i <strong>strumień wyjściowy</strong> (co my do niego wysyłamy).</p>
+
+      <div class="callout info">
+        <span class="callout-icon">📖</span>
+        <div>
+          <strong>BufferedReader</strong> — czyta tekst linia po linii (<code>readLine()</code>)<br>
+          <strong>PrintWriter</strong> — wysyła tekst (<code>println()</code>)<br>
+          Argument <code>true</code> w PrintWriter = <strong>autoFlush</strong> — dane są wysyłane od razu bez ręcznego <code>flush()</code>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — ClientHandler.java</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">ClientHandler</span> <span class="kw">implements</span> <span class="typ">Runnable</span> {
+
+    <span class="kw">private final</span> <span class="typ">Socket</span> socket;
+    <span class="kw">private final</span> <span class="cls">Server</span> server;
+    <span class="kw">private</span> <span class="typ">PrintWriter</span> out;
+    <span class="kw">private</span> <span class="typ">String</span> login;  <span class="cmt">// zapamiętaj kto to jest</span>
+
+    <span class="kw">public</span> <span class="cls">ClientHandler</span>(<span class="typ">Socket</span> socket, <span class="cls">Server</span> server) {
+        <span class="kw">this</span>.socket = socket;
+        <span class="kw">this</span>.server = server;
+    }
+
+    <span class="kw">@Override</span>
+    <span class="kw">public void</span> <span class="met">run</span>() {
+        <span class="kw">try</span> (
+            <span class="typ">BufferedReader</span> in = <span class="kw">new</span> <span class="typ">BufferedReader</span>(
+                <span class="kw">new</span> <span class="typ">InputStreamReader</span>(socket.<span class="met">getInputStream</span>()));
+        ) {
+            <span class="cmt">// out trzeba ustawić tutaj, wewnątrz try</span>
+            out = <span class="kw">new</span> <span class="typ">PrintWriter</span>(socket.<span class="met">getOutputStream</span>(), <span class="kw">true</span>);
+
+            <span class="cmt">// Wyślij powitanie</span>
+            out.<span class="met">println</span>(<span class="str">"Witaj! Podaj login:"</span>);
+            login = in.<span class="met">readLine</span>();
+
+            <span class="cmt">// Główna pętla — czytaj wiadomości od klienta</span>
+            <span class="typ">String</span> line;
+            <span class="kw">while</span> ((line = in.<span class="met">readLine</span>()) != <span class="kw">null</span>) {
+                <span class="cmt">// readLine() zwraca null gdy klient się rozłącza</span>
+                System.out.<span class="met">println</span>(login + <span class="str">": "</span> + line);
+                server.<span class="met">broadcast</span>(login + <span class="str">": "</span> + line);
+            }
+
+        } <span class="kw">catch</span> (<span class="typ">IOException</span> e) {
+            System.out.<span class="met">println</span>(login + <span class="str">" rozłączony"</span>);
+        } <span class="kw">finally</span> {
+            <span class="cmt">// ZAWSZE usuń klienta z listy gdy coś pójdzie nie tak</span>
+            server.<span class="met">removeClient</span>(<span class="kw">this</span>);
+        }
+    }
+
+    <span class="cmt">// Metoda do wysyłania wiadomości temu klientowi</span>
+    <span class="kw">public void</span> <span class="met">sendMessage</span>(<span class="typ">String</span> msg) {
+        <span class="kw">if</span> (out != <span class="kw">null</span>) out.<span class="met">println</span>(msg);
+    }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">getLogin</span>() { <span class="kw">return</span> login; }
+}</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">🐾</span>
+        <div><strong>Dlaczego implements Runnable?</strong> Bo każdy klient będzie obsługiwany w osobnym wątku (<code>new Thread(handler).start()</code>). Runnable = "ta klasa może być uruchomiona w wątku".</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 3: Wielowątkowość -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div>
+          <div class="section-title">Wielowątkowość i synchronizacja 🧵</div>
+          <div class="section-sub">Obsługa wielu klientów jednocześnie</div>
+        </div>
+      </div>
+
+      <p>Bez wielowątkowości serwer obsługiwałby klientów po kolei — jeden musiałby czekać aż serwer skończy z poprzednim. Zamiast tego każdy klient dostaje własny wątek i wszystko działa równolegle.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">Uruchom ClientHandler w wątku</div>
+            <p>W metodzie <code>listen()</code> serwera, po <code>accept()</code>:</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — fragment listen()</span>
+        </div>
+        <pre><span class="kw">while</span> (<span class="kw">true</span>) {
+    <span class="typ">Socket</span> clientSocket = serverSocket.<span class="met">accept</span>();
+
+    <span class="cls">ClientHandler</span> handler = <span class="kw">new</span> <span class="cls">ClientHandler</span>(clientSocket, <span class="kw">this</span>);
+    clients.<span class="met">add</span>(handler);
+    <span class="kw">new</span> <span class="typ">Thread</span>(handler).<span class="met">start</span>();  <span class="cmt">// ← klient dostaje swój wątek</span>
+}</pre>
+      </div>
+
+      <h3>Problem: synchronizacja listy klientów</h3>
+      <p>Wiele wątków może jednocześnie próbować dodać/usunąć klienta z listy — to <strong>wyścig (race condition)</strong>. Rozwiązanie:</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — lista klientów</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Server</span> {
+
+    <span class="cmt">// Opcja 1: synchronizedList (prostsze)</span>
+    <span class="kw">private final</span> <span class="typ">List</span>&lt;<span class="cls">ClientHandler</span>&gt; clients =
+        <span class="typ">Collections</span>.<span class="met">synchronizedList</span>(<span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;());
+
+    <span class="cmt">// Opcja 2: CopyOnWriteArrayList (bezpieczne przy iteracji)</span>
+    <span class="kw">private final</span> <span class="typ">List</span>&lt;<span class="cls">ClientHandler</span>&gt; clients =
+        <span class="kw">new</span> <span class="typ">CopyOnWriteArrayList</span>&lt;&gt;();
+
+    <span class="cmt">// Broadcast: synchronized żeby wątki nie wchodziły sobie w drogę</span>
+    <span class="kw">public synchronized void</span> <span class="met">broadcast</span>(<span class="typ">String</span> message) {
+        <span class="kw">for</span> (<span class="cls">ClientHandler</span> client : clients) {
+            client.<span class="met">sendMessage</span>(message);
+        }
+    }
+
+    <span class="kw">public void</span> <span class="met">removeClient</span>(<span class="cls">ClientHandler</span> handler) {
+        clients.<span class="met">remove</span>(handler);
+    }
+}</pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>synchronized</strong> na metodzie = w danej chwili tylko JEDEN wątek może ją wykonać. Bez tego dwa wątki mogą pisać do tej samej listy jednocześnie i spowodować crash.</div>
+      </div>
+
+      <h3>Autentykacja — pytanie o login i hasło</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — fragment run() w ClientHandler</span>
+        </div>
+        <pre><span class="cmt">// Na początku run(), przed główną pętlą:</span>
+out.<span class="met">println</span>(<span class="str">"Podaj login:"</span>);
+<span class="typ">String</span> login = in.<span class="met">readLine</span>();
+
+out.<span class="met">println</span>(<span class="str">"Podaj hasło:"</span>);
+<span class="typ">String</span> password = in.<span class="met">readLine</span>();
+
+<span class="kw">if</span> (!server.<span class="met">getDatabase</span>().<span class="met">authenticate</span>(login, password)) {
+    out.<span class="met">println</span>(<span class="str">"Błędne dane. Do widzenia!"</span>);
+    socket.<span class="met">close</span>();
+    <span class="kw">return</span>;  <span class="cmt">// ← zakończ metodę run(), wątek się kończy</span>
+}
+
+<span class="kw">this</span>.login = login;  <span class="cmt">// zapamiętaj login na później</span>
+out.<span class="met">println</span>(<span class="str">"Zalogowano pomyślnie!"</span>);</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 4: SQLite (rozszerzona) -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div>
+          <div class="section-title">Baza danych SQLite & JDBC 🗄️</div>
+          <div class="section-sub">Od zera do rankingu — wszystko czego potrzebujesz</div>
+        </div>
+      </div>
+
+      <p>SQLite to baza danych, która żyje w <strong>jednym pliku</strong> (.db). Nie trzeba instalować żadnego osobnego serwera — plik tworzy się sam przy pierwszym połączeniu. W Javie rozmawiamy z nią przez <strong>JDBC</strong> (Java Database Connectivity) — wspólny interfejs do wszystkich baz danych.</p>
+
+      <div class="callout info">
+        <span class="callout-icon">🏗️</span>
+        <div>
+          <strong>Jak to działa w skrócie:</strong><br>
+          <code>DriverManager</code> → tworzy <code>Connection</code> (połączenie z plikiem .db)<br>
+          <code>Connection</code> → tworzy <code>Statement</code> lub <code>PreparedStatement</code> (zapytanie)<br>
+          <code>Statement.executeQuery()</code> → zwraca <code>ResultSet</code> (wyniki SELECT)<br>
+          <code>Statement.executeUpdate()</code> → zwraca liczbę zmienionych wierszy (INSERT/UPDATE/DELETE)
+        </div>
+      </div>
+
+      <!-- ─── KROK 0: Maven ─── -->
+      <h3>Krok 0 — Dodaj bibliotekę do pom.xml</h3>
+      <p>SQLite nie jest wbudowane w Javę — trzeba dodać driver JDBC jako zależność Maven:</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">XML — pom.xml (w sekcji &lt;dependencies&gt;)</span>
+        </div>
+        <pre>&lt;<span class="kw">dependency</span>&gt;
+    &lt;<span class="kw">groupId</span>&gt;org.xerial&lt;/<span class="kw">groupId</span>&gt;
+    &lt;<span class="kw">artifactId</span>&gt;sqlite-jdbc&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;<span class="kw">version</span>&gt;3.43.0.0&lt;/<span class="kw">version</span>&gt;
+&lt;/<span class="kw">dependency</span>&gt;</pre>
+      </div>
+      <div class="callout tip">
+        <span class="callout-icon">🐾</span>
+        <div>Po dodaniu zależności kliknij w IntelliJ ikonę słonia (reload Maven) lub uruchom <code>mvn install</code>. Bez tego kompilator nie znajdzie klas JDBC dla SQLite.</div>
+      </div>
+
+      <!-- ─── KROK 1: Połączenie ─── -->
+      <h3>Krok 1 — Połączenie z bazą (Connection)</h3>
+      <p>Połączenie otwieramy przez <code>DriverManager.getConnection()</code> z URL-em w formacie <code>jdbc:sqlite:ŚCIEŻKA_DO_PLIKU</code>.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — różne sposoby połączenia</span>
+        </div>
+        <pre><span class="cmt">// Plik w katalogu roboczym programu (najprościej na kolokwium)</span>
+<span class="typ">Connection</span> conn = <span class="typ">DriverManager</span>.<span class="met">getConnection</span>(<span class="str">"jdbc:sqlite:database.db"</span>);
+
+<span class="cmt">// Plik w konkretnej lokalizacji</span>
+<span class="typ">Connection</span> conn = <span class="typ">DriverManager</span>.<span class="met">getConnection</span>(<span class="str">"jdbc:sqlite:/home/user/mydb.db"</span>);
+
+<span class="cmt">// Baza tylko w pamięci RAM (znika po zamknięciu programu — do testów)</span>
+<span class="typ">Connection</span> conn = <span class="typ">DriverManager</span>.<span class="met">getConnection</span>(<span class="str">"jdbc:sqlite::memory:"</span>);
+
+<span class="cmt">// Sprawdzenie czy plik już istnieje przed połączeniem</span>
+<span class="typ">File</span> dbFile = <span class="kw">new</span> <span class="typ">File</span>(<span class="str">"index.db"</span>);
+<span class="kw">boolean</span> isNew = !dbFile.<span class="met">exists</span>();  <span class="cmt">// true = pierwsza próba, trzeba stworzyć tabele</span>
+<span class="typ">Connection</span> conn = <span class="typ">DriverManager</span>.<span class="met">getConnection</span>(<span class="str">"jdbc:sqlite:index.db"</span>);</pre>
+      </div>
+      <div class="callout good">
+        <span class="callout-icon">✅</span>
+        <div>Jeśli plik <code>database.db</code> nie istnieje — SQLite <strong>stworzy go automatycznie</strong>. Jeśli istnieje — otworzy istniejący. Nie ma potrzeby sprawdzać z góry czy plik jest.</div>
+      </div>
+
+      <!-- ─── KROK 2: CREATE TABLE ─── -->
+      <h3>Krok 2 — Tworzenie tabeli (CREATE TABLE)</h3>
+      <p>Tabele tworzymy przy starcie programu, używając <code>IF NOT EXISTS</code> żeby nie crashować gdy tabela już jest.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">SQL — typy danych w SQLite</span>
+        </div>
+        <pre><span class="cmt">-- SQLite ma tylko 5 typów (ignoruje inne nazwy i konwertuje sam)</span>
+<span class="kw">INTEGER</span>   <span class="cmt">-- liczby całkowite (int, long)</span>
+<span class="kw">REAL</span>      <span class="cmt">-- liczby zmiennoprzecinkowe (double, float)</span>
+<span class="kw">TEXT</span>      <span class="cmt">-- napisy (String)</span>
+<span class="kw">BLOB</span>      <span class="cmt">-- surowe bajty (byte[])</span>
+<span class="kw">NULL</span>      <span class="cmt">-- brak wartości</span>
+
+<span class="cmt">-- Popularne constrainty:</span>
+<span class="kw">PRIMARY KEY</span>              <span class="cmt">-- unikalny identyfikator wiersza</span>
+<span class="kw">AUTOINCREMENT</span>            <span class="cmt">-- id rośnie samo (używaj z INTEGER PRIMARY KEY)</span>
+<span class="kw">NOT NULL</span>                 <span class="cmt">-- pole nie może być puste</span>
+<span class="kw">DEFAULT</span> <span class="num">0</span>                <span class="cmt">-- wartość domyślna gdy nie podasz</span>
+<span class="kw">UNIQUE</span>                   <span class="cmt">-- wszystkie wartości muszą być różne</span></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — tworzenie tabeli przy starcie</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Database</span> {
+
+    <span class="kw">private final</span> <span class="typ">Connection</span> conn;
+
+    <span class="kw">public</span> <span class="cls">Database</span>() <span class="kw">throws</span> <span class="typ">SQLException</span> {
+        conn = <span class="typ">DriverManager</span>.<span class="met">getConnection</span>(<span class="str">"jdbc:sqlite:database.db"</span>);
+        <span class="met">createTables</span>();
+    }
+
+    <span class="kw">private void</span> <span class="met">createTables</span>() <span class="kw">throws</span> <span class="typ">SQLException</span> {
+        <span class="cmt">// Text block (Java 15+) — czytelny sposób na długi SQL</span>
+        <span class="typ">String</span> sql = <span class="str">"""
+            CREATE TABLE IF NOT EXISTS users (
+                login    TEXT    PRIMARY KEY,
+                password TEXT    NOT NULL,
+                points   INTEGER DEFAULT 0
+            );
+            CREATE TABLE IF NOT EXISTS history (
+                id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                winner    TEXT    NOT NULL,
+                loser     TEXT    NOT NULL,
+                timestamp TEXT    NOT NULL
+            );
+            """</span>;
+
+        <span class="cmt">// executeUpdate zwraca liczbę zmienionych wierszy (tu: 0, bo DDL)</span>
+        conn.<span class="met">createStatement</span>().<span class="met">executeUpdate</span>(sql);
+        System.out.<span class="met">println</span>(<span class="str">"Baza gotowa!"</span>);
+    }
+}</pre>
+      </div>
+
+      <!-- ─── SELECT ─── -->
+      <h3>Krok 3 — SELECT — odczyt danych</h3>
+      <p><code>SELECT</code> zwraca wiersze z tabeli. Wynik dostajemy jako <code>ResultSet</code> — iterujemy po nim metodą <code>next()</code>.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — różne warianty SELECT</span>
+        </div>
+        <pre><span class="cmt">// ── Pobierz WSZYSTKICH użytkowników ──</span>
+<span class="typ">ResultSet</span> rs = conn.<span class="met">createStatement</span>().<span class="met">executeQuery</span>(
+    <span class="str">"SELECT login, points FROM users ORDER BY points DESC"</span>);
+
+<span class="kw">while</span> (rs.<span class="met">next</span>()) {  <span class="cmt">// każde next() = przejdź do następnego wiersza</span>
+    <span class="typ">String</span> login  = rs.<span class="met">getString</span>(<span class="str">"login"</span>);   <span class="cmt">// po nazwie kolumny</span>
+    <span class="kw">int</span>    points = rs.<span class="met">getInt</span>(<span class="str">"points"</span>);
+    System.out.<span class="met">println</span>(login + <span class="str">": "</span> + points);
+}
+
+<span class="cmt">// ── Sprawdź czy JEDEN rekord istnieje (np. autentykacja) ──</span>
+<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"SELECT 1 FROM users WHERE login = ? AND password = ?"</span>);
+ps.<span class="met">setString</span>(<span class="num">1</span>, login);
+ps.<span class="met">setString</span>(<span class="num">2</span>, password);
+<span class="typ">ResultSet</span> rs = ps.<span class="met">executeQuery</span>();
+<span class="kw">boolean</span> found = rs.<span class="met">next</span>();  <span class="cmt">// true jeśli choć jeden wiersz pasuje</span>
+
+<span class="cmt">// ── Pobierz wartość z konkretnego wiersza ──</span>
+<span class="typ">PreparedStatement</span> ps2 = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"SELECT points FROM users WHERE login = ?"</span>);
+ps2.<span class="met">setString</span>(<span class="num">1</span>, <span class="str">"alice"</span>);
+<span class="typ">ResultSet</span> rs2 = ps2.<span class="met">executeQuery</span>();
+<span class="kw">if</span> (rs2.<span class="met">next</span>()) {
+    <span class="kw">int</span> pts = rs2.<span class="met">getInt</span>(<span class="str">"points"</span>);  <span class="cmt">// albo rs2.getInt(1) — numer kolumny</span>
+}
+
+<span class="cmt">// ── SELECT z LIKE (filtrowanie) ──</span>
+<span class="typ">PreparedStatement</span> ps3 = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"SELECT login FROM users WHERE login LIKE ?"</span>);
+ps3.<span class="met">setString</span>(<span class="num">1</span>, prefix + <span class="str">"%"</span>);  <span class="cmt">// % = dowolny ciąg znaków</span>
+<span class="typ">ResultSet</span> rs3 = ps3.<span class="met">executeQuery</span>();</pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metoda ResultSet</th><th>Typ Java</th><th>Kiedy używać</th></tr></thead>
+          <tbody>
+            <tr><td><code>rs.getString("kol")</code></td><td>String</td><td>TEXT, dowolny tekst</td></tr>
+            <tr><td><code>rs.getInt("kol")</code></td><td>int</td><td>INTEGER, liczba całkowita</td></tr>
+            <tr><td><code>rs.getLong("kol")</code></td><td>long</td><td>duże INTEGER (np. timestamp ms)</td></tr>
+            <tr><td><code>rs.getDouble("kol")</code></td><td>double</td><td>REAL, liczba zmiennoprzecinkowa</td></tr>
+            <tr><td><code>rs.getBoolean("kol")</code></td><td>boolean</td><td>INTEGER 0/1 jako bool</td></tr>
+            <tr><td><code>rs.next()</code></td><td>boolean</td><td>przejdź do następnego wiersza</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ─── INSERT ─── -->
+      <h3>Krok 4 — INSERT — dodawanie danych</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — INSERT z PreparedStatement</span>
+        </div>
+        <pre><span class="cmt">// ── Podstawowy INSERT ──</span>
+<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"INSERT INTO users (login, password, points) VALUES (?, ?, ?)"</span>);
+ps.<span class="met">setString</span>(<span class="num">1</span>, <span class="str">"alice"</span>);   <span class="cmt">// ? numer 1</span>
+ps.<span class="met">setString</span>(<span class="num">2</span>, <span class="str">"haslo123"</span>); <span class="cmt">// ? numer 2</span>
+ps.<span class="met">setInt</span>   (<span class="num">3</span>, <span class="num">0</span>);          <span class="cmt">// ? numer 3</span>
+ps.<span class="met">executeUpdate</span>();          <span class="cmt">// wykonaj — zwraca liczbę wstawionych wierszy</span>
+
+<span class="cmt">// ── INSERT z autoinkrementowanym ID ──</span>
+<span class="cmt">// (nie podajemy 'id' — SQLite sam je nada)</span>
+<span class="typ">PreparedStatement</span> ps2 = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"INSERT INTO history (winner, loser, timestamp) VALUES (?, ?, ?)"</span>);
+ps2.<span class="met">setString</span>(<span class="num">1</span>, winner);
+ps2.<span class="met">setString</span>(<span class="num">2</span>, loser);
+ps2.<span class="met">setString</span>(<span class="num">3</span>, <span class="typ">LocalDateTime</span>.<span class="met">now</span>().<span class="met">toString</span>());
+ps2.<span class="met">executeUpdate</span>();
+
+<span class="cmt">// ── Pobierz ID właśnie wstawionego wiersza ──</span>
+<span class="typ">ResultSet</span> generated = ps2.<span class="met">getGeneratedKeys</span>();
+<span class="kw">if</span> (generated.<span class="met">next</span>()) {
+    <span class="kw">long</span> newId = generated.<span class="met">getLong</span>(<span class="num">1</span>);  <span class="cmt">// id nowego wiersza</span>
+}
+
+<span class="cmt">// ── INSERT OR IGNORE — nie crash gdy login już istnieje ──</span>
+<span class="typ">PreparedStatement</span> ps3 = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"INSERT OR IGNORE INTO users (login, password) VALUES (?, ?)"</span>);
+ps3.<span class="met">setString</span>(<span class="num">1</span>, login);
+ps3.<span class="met">setString</span>(<span class="num">2</span>, password);
+ps3.<span class="met">executeUpdate</span>();
+
+<span class="cmt">// ── INSERT OR REPLACE — wstaw albo nadpisz istniejący ──</span>
+conn.<span class="met">prepareStatement</span>(<span class="str">"INSERT OR REPLACE INTO users VALUES (?, ?, ?)"</span>);</pre>
+      </div>
+
+      <!-- ─── UPDATE ─── -->
+      <h3>Krok 5 — UPDATE — modyfikacja danych</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — różne warianty UPDATE</span>
+        </div>
+        <pre><span class="cmt">// ── Ustaw konkretną wartość ──</span>
+<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"UPDATE users SET points = ? WHERE login = ?"</span>);
+ps.<span class="met">setInt</span>   (<span class="num">1</span>, <span class="num">42</span>);      <span class="cmt">// nowa wartość</span>
+ps.<span class="met">setString</span>(<span class="num">2</span>, <span class="str">"alice"</span>); <span class="cmt">// warunek</span>
+<span class="kw">int</span> rows = ps.<span class="met">executeUpdate</span>();  <span class="cmt">// ile wierszy zmieniono</span>
+
+<span class="cmt">// ── Dodaj do istniejącej wartości (nie trzeba znać aktualnej!) ──</span>
+<span class="typ">PreparedStatement</span> ps2 = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"UPDATE users SET points = points + ? WHERE login = ?"</span>);
+ps2.<span class="met">setInt</span>   (<span class="num">1</span>, +<span class="num">1</span>);       <span class="cmt">// +1 dla wygranego</span>
+ps2.<span class="met">setString</span>(<span class="num">2</span>, winner);
+ps2.<span class="met">executeUpdate</span>();
+
+ps2.<span class="met">setInt</span>   (<span class="num">1</span>, -<span class="num">1</span>);       <span class="cmt">// -1 dla przegranego — REUŻYJ ten sam ps!</span>
+ps2.<span class="met">setString</span>(<span class="num">2</span>, loser);
+ps2.<span class="met">executeUpdate</span>();
+
+<span class="cmt">// ── UPDATE wielu kolumn naraz ──</span>
+<span class="typ">PreparedStatement</span> ps3 = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"UPDATE users SET points = ?, password = ? WHERE login = ?"</span>);
+ps3.<span class="met">setInt</span>   (<span class="num">1</span>, newPoints);
+ps3.<span class="met">setString</span>(<span class="num">2</span>, newPassword);
+ps3.<span class="met">setString</span>(<span class="num">3</span>, login);
+ps3.<span class="met">executeUpdate</span>();</pre>
+      </div>
+
+      <!-- ─── DELETE ─── -->
+      <h3>Krok 6 — DELETE — usuwanie danych</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — DELETE</span>
+        </div>
+        <pre><span class="cmt">// ── Usuń konkretny wiersz ──</span>
+<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"DELETE FROM history WHERE winner = ? OR loser = ?"</span>);
+ps.<span class="met">setString</span>(<span class="num">1</span>, bannedUser);
+ps.<span class="met">setString</span>(<span class="num">2</span>, bannedUser);
+<span class="kw">int</span> deleted = ps.<span class="met">executeUpdate</span>();  <span class="cmt">// liczba usuniętych wierszy</span>
+System.out.<span class="met">println</span>(<span class="str">"Usunięto rekordów: "</span> + deleted);
+
+<span class="cmt">// ── Wyczyść całą tabelę ──</span>
+conn.<span class="met">createStatement</span>().<span class="met">executeUpdate</span>(<span class="str">"DELETE FROM history"</span>);</pre>
+      </div>
+
+      <!-- ─── PreparedStatement deep dive ─── -->
+      <h3>Krok 7 — PreparedStatement — dlaczego ZAWSZE</h3>
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>SQL Injection — klasyczny atak:</strong><br>
+        Wpisujesz jako login: <code>alice' OR '1'='1</code><br>
+        Zapytanie staje się: <code>SELECT * WHERE login='alice' OR '1'='1'</code><br>
+        Warunek zawsze prawdziwy → haker loguje się bez hasła! <code>PreparedStatement</code> traktuje parametry jako <em>dane</em>, nie kod SQL — atak niemożliwy.</div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Statement vs PreparedStatement</span>
+        </div>
+        <pre><span class="cmt">// ❌ ŹLE — podatne na SQL injection + wolniejsze</span>
+<span class="typ">String</span> sql = <span class="str">"SELECT * FROM users WHERE login='"</span> + login + <span class="str">"'"</span>;
+conn.<span class="met">createStatement</span>().<span class="met">executeQuery</span>(sql);
+
+<span class="cmt">// ✅ DOBRZE — PreparedStatement kompiluje zapytanie RAZ</span>
+<span class="cmt">//            i potem tylko podmienia parametry</span>
+<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+    <span class="str">"SELECT * FROM users WHERE login = ?"</span>);  <span class="cmt">// ? to placeholder</span>
+
+<span class="cmt">// Ustaw parametry (indeksy od 1, nie od 0!)</span>
+ps.<span class="met">setString</span> (<span class="num">1</span>, login);     <span class="cmt">// TEXT</span>
+ps.<span class="met">setInt</span>    (<span class="num">1</span>, number);   <span class="cmt">// INTEGER</span>
+ps.<span class="met">setDouble</span> (<span class="num">1</span>, value);    <span class="cmt">// REAL</span>
+ps.<span class="met">setLong</span>   (<span class="num">1</span>, bigNum);   <span class="cmt">// duże INTEGER</span>
+ps.<span class="met">setNull</span>   (<span class="num">1</span>, <span class="typ">Types</span>.INTEGER);  <span class="cmt">// NULL</span>
+
+<span class="cmt">// Wykonaj</span>
+<span class="typ">ResultSet</span> rs = ps.<span class="met">executeQuery</span>();    <span class="cmt">// dla SELECT</span>
+<span class="kw">int</span> rows     = ps.<span class="met">executeUpdate</span>();   <span class="cmt">// dla INSERT/UPDATE/DELETE</span>
+
+<span class="cmt">// PreparedStatement można REUŻYĆ — zmień parametry i wykonaj ponownie</span>
+ps.<span class="met">setString</span>(<span class="num">1</span>, otherLogin);
+<span class="typ">ResultSet</span> rs2 = ps.<span class="met">executeQuery</span>();   <span class="cmt">// nowe zapytanie, ten sam obiekt</span></pre>
+      </div>
+
+      <!-- ─── Transakcje ─── -->
+      <h3>🍬 Smaczek — Transakcje</h3>
+      <p>Transakcja to zestaw operacji, które albo <strong>wszystkie się wykonują</strong>, albo <strong>żadna</strong>. Idealne gdy musisz zaktualizować kilka tabel naraz (np. punkty wygranego I przegranego).</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — transakcja (commit / rollback)</span>
+        </div>
+        <pre><span class="kw">try</span> {
+    conn.<span class="met">setAutoCommit</span>(<span class="kw">false</span>);  <span class="cmt">// wyłącz auto-zatwierdzanie</span>
+
+    <span class="cmt">// Wszystkie te operacje muszą się udać LUB żadna</span>
+    updatePs.<span class="met">setInt</span>   (<span class="num">1</span>, +<span class="num">1</span>);
+    updatePs.<span class="met">setString</span>(<span class="num">2</span>, winner);
+    updatePs.<span class="met">executeUpdate</span>();
+
+    updatePs.<span class="met">setInt</span>   (<span class="num">1</span>, -<span class="num">1</span>);
+    updatePs.<span class="met">setString</span>(<span class="num">2</span>, loser);
+    updatePs.<span class="met">executeUpdate</span>();
+
+    insertHistory.<span class="met">setString</span>(<span class="num">1</span>, winner);
+    insertHistory.<span class="met">setString</span>(<span class="num">2</span>, loser);
+    insertHistory.<span class="met">executeUpdate</span>();
+
+    conn.<span class="met">commit</span>();  <span class="cmt">// ✅ zatwierdź wszystko naraz</span>
+
+} <span class="kw">catch</span> (<span class="typ">SQLException</span> e) {
+    conn.<span class="met">rollback</span>();  <span class="cmt">// ❌ błąd → cofnij wszystkie zmiany</span>
+    <span class="kw">throw</span> e;
+} <span class="kw">finally</span> {
+    conn.<span class="met">setAutoCommit</span>(<span class="kw">true</span>);  <span class="cmt">// przywróć domyślne zachowanie</span>
+}</pre>
+      </div>
+
+      <!-- ─── Smaczek: try-with-resources ─── -->
+      <h3>🍬 Smaczek — try-with-resources i zamykanie</h3>
+      <p>Connection, Statement i ResultSet to zasoby, które trzeba zamknąć. <code>try-with-resources</code> robi to automatycznie.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — czyste zamykanie zasobów</span>
+        </div>
+        <pre><span class="cmt">// Stary sposób — trzeba pamiętać o close() w finally</span>
+<span class="typ">PreparedStatement</span> ps = <span class="kw">null</span>;
+<span class="typ">ResultSet</span> rs = <span class="kw">null</span>;
+<span class="kw">try</span> {
+    ps = conn.<span class="met">prepareStatement</span>(<span class="str">"SELECT ..."</span>);
+    rs = ps.<span class="met">executeQuery</span>();
+    <span class="cmt">// ...</span>
+} <span class="kw">finally</span> {
+    <span class="kw">if</span> (rs != <span class="kw">null</span>) rs.<span class="met">close</span>();
+    <span class="kw">if</span> (ps != <span class="kw">null</span>) ps.<span class="met">close</span>();
+}
+
+<span class="cmt">// ✅ Nowy sposób — try-with-resources (zamknie samo po wyjściu z bloku)</span>
+<span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(<span class="str">"SELECT ..."</span>);
+     <span class="typ">ResultSet</span> rs = ps.<span class="met">executeQuery</span>()) {
+
+    <span class="kw">while</span> (rs.<span class="met">next</span>()) {
+        <span class="cmt">// ...</span>
+    }
+} <span class="cmt">// ps i rs zamknięte automatycznie</span>
+
+<span class="cmt">// Connection trzymaj otwarte przez cały czas życia programu</span>
+<span class="cmt">// (zamknij tylko na koniec, np. w metodzie close())</span>
+<span class="kw">public void</span> <span class="met">close</span>() <span class="kw">throws</span> <span class="typ">SQLException</span> {
+    conn.<span class="met">close</span>();
+}</pre>
+      </div>
+
+      <!-- ─── Pełna klasa ─── -->
+      <h3>Pełna klasa Database — gotowa do kolokwium</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Database.java (kompletna)</span>
+        </div>
+        <pre><span class="kw">import</span> java.sql.*;
+<span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="cls">Database</span> {
+
+    <span class="kw">private final</span> <span class="typ">Connection</span> conn;
+
+    <span class="kw">public</span> <span class="cls">Database</span>() <span class="kw">throws</span> <span class="typ">SQLException</span> {
+        conn = <span class="typ">DriverManager</span>.<span class="met">getConnection</span>(<span class="str">"jdbc:sqlite:database.db"</span>);
+        conn.<span class="met">createStatement</span>().<span class="met">executeUpdate</span>(<span class="str">"""
+            CREATE TABLE IF NOT EXISTS users (
+                login    TEXT    PRIMARY KEY,
+                password TEXT    NOT NULL,
+                points   INTEGER DEFAULT 0
+            )
+            """</span>);
+    }
+
+    <span class="cmt">// SELECT — autentykacja</span>
+    <span class="kw">public boolean</span> <span class="met">authenticate</span>(<span class="typ">String</span> login, <span class="typ">String</span> password) {
+        <span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+                <span class="str">"SELECT 1 FROM users WHERE login=? AND password=?"</span>)) {
+            ps.<span class="met">setString</span>(<span class="num">1</span>, login);
+            ps.<span class="met">setString</span>(<span class="num">2</span>, password);
+            <span class="kw">return</span> ps.<span class="met">executeQuery</span>().<span class="met">next</span>();
+        } <span class="kw">catch</span> (<span class="typ">SQLException</span> e) { <span class="kw">return false</span>; }
+    }
+
+    <span class="cmt">// INSERT — dodaj użytkownika</span>
+    <span class="kw">public void</span> <span class="met">addUser</span>(<span class="typ">String</span> login, <span class="typ">String</span> password) {
+        <span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+                <span class="str">"INSERT OR IGNORE INTO users (login,password) VALUES (?,?)"</span>)) {
+            ps.<span class="met">setString</span>(<span class="num">1</span>, login);
+            ps.<span class="met">setString</span>(<span class="num">2</span>, password);
+            ps.<span class="met">executeUpdate</span>();
+        } <span class="kw">catch</span> (<span class="typ">SQLException</span> e) { e.<span class="met">printStackTrace</span>(); }
+    }
+
+    <span class="cmt">// UPDATE — zaktualizuj punkty</span>
+    <span class="kw">public void</span> <span class="met">updatePoints</span>(<span class="typ">String</span> login, <span class="kw">int</span> delta) {
+        <span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+                <span class="str">"UPDATE users SET points = points + ? WHERE login = ?"</span>)) {
+            ps.<span class="met">setInt</span>   (<span class="num">1</span>, delta);
+            ps.<span class="met">setString</span>(<span class="num">2</span>, login);
+            ps.<span class="met">executeUpdate</span>();
+        } <span class="kw">catch</span> (<span class="typ">SQLException</span> e) { e.<span class="met">printStackTrace</span>(); }
+    }
+
+    <span class="cmt">// SELECT z ORDER BY — ranking</span>
+    <span class="kw">public</span> <span class="typ">Map</span>&lt;<span class="typ">String</span>,<span class="typ">Integer</span>&gt; <span class="met">getLeaderboard</span>() {
+        <span class="typ">Map</span>&lt;<span class="typ">String</span>,<span class="typ">Integer</span>&gt; result = <span class="kw">new</span> <span class="typ">LinkedHashMap</span>&lt;&gt;();
+        <span class="kw">try</span> (<span class="typ">ResultSet</span> rs = conn.<span class="met">createStatement</span>().<span class="met">executeQuery</span>(
+                <span class="str">"SELECT login, points FROM users ORDER BY points DESC"</span>)) {
+            <span class="kw">while</span> (rs.<span class="met">next</span>())
+                result.<span class="met">put</span>(rs.<span class="met">getString</span>(<span class="str">"login"</span>), rs.<span class="met">getInt</span>(<span class="str">"points"</span>));
+        } <span class="kw">catch</span> (<span class="typ">SQLException</span> e) { e.<span class="met">printStackTrace</span>(); }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="cmt">// DELETE — usuń rekordy bana</span>
+    <span class="kw">public int</span> <span class="met">deleteUserRecords</span>(<span class="typ">String</span> login) {
+        <span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="met">prepareStatement</span>(
+                <span class="str">"DELETE FROM history WHERE winner=? OR loser=?"</span>)) {
+            ps.<span class="met">setString</span>(<span class="num">1</span>, login);
+            ps.<span class="met">setString</span>(<span class="num">2</span>, login);
+            <span class="kw">return</span> ps.<span class="met">executeUpdate</span>();  <span class="cmt">// ile wierszy usunięto</span>
+        } <span class="kw">catch</span> (<span class="typ">SQLException</span> e) { <span class="kw">return</span> <span class="num">0</span>; }
+    }
+}</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">🐾</span>
+        <div><strong>Szybka ściąga:</strong> potrzebujesz danych → <code>executeQuery()</code> → iteruj <code>rs.next()</code><br>
+        Modyfikujesz bazę → <code>executeUpdate()</code> → zwraca liczbę zmienionych wierszy<br>
+        Tworzysz/kasujesz tabele → <code>executeUpdate()</code> lub <code>execute()</code></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 5: JavaFX -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div>
+          <div class="section-title">JavaFX + Canvas — rysowanie 2D 🎨</div>
+          <div class="section-sub">Aktualne zadanie: serwer rysuje odcinki od klientów</div>
+        </div>
+      </div>
+
+      <p>JavaFX Canvas to jak tablica do rysowania. Masz <code>GraphicsContext</code> (coś jak pisak) i rysujesz nim kształty, linie, tekst.</p>
+
+      <h3>Podstawowe rysowanie</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — JavaFX Canvas</span>
+        </div>
+        <pre><span class="typ">Canvas</span> canvas = <span class="kw">new</span> <span class="typ">Canvas</span>(<span class="num">500</span>, <span class="num">500</span>);
+<span class="typ">GraphicsContext</span> gc = canvas.<span class="met">getGraphicsContext2D</span>();
+
+<span class="cmt">// Białe tło</span>
+gc.<span class="met">setFill</span>(<span class="typ">Color</span>.WHITE);
+gc.<span class="met">fillRect</span>(<span class="num">0</span>, <span class="num">0</span>, <span class="num">500</span>, <span class="num">500</span>);
+
+<span class="cmt">// Rysuj odcinek</span>
+gc.<span class="met">setStroke</span>(<span class="typ">Color</span>.<span class="met">web</span>(<span class="str">"#FF69B4"</span>));  <span class="cmt">// kolor z hex</span>
+gc.<span class="met">setLineWidth</span>(<span class="num">2</span>);
+gc.<span class="met">strokeLine</span>(x1, y1, x2, y2);     <span class="cmt">// narysuj odcinek</span>
+
+<span class="cmt">// Tekst (np. aktualne przesunięcie)</span>
+gc.<span class="met">setFill</span>(<span class="typ">Color</span>.BLACK);
+gc.<span class="met">fillText</span>(<span class="str">"offset: "</span> + offsetX + <span class="str">", "</span> + offsetY, <span class="num">10</span>, <span class="num">20</span>);</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">🌸</span>
+        <div><strong>UWAGA na wątki!</strong> Canvas można rysować TYLKO z wątku JavaFX. Serwer działa w innym wątku, więc musisz owinąć każde rysowanie w <code>Platform.runLater()</code>.</div>
+      </div>
+
+      <h3>Platform.runLater() — złota zasada</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — rysowanie z wątku sieciowego</span>
+        </div>
+        <pre><span class="cmt">// W ClientHandler, gdy dostaniesz dane odcinka:</span>
+<span class="kw">double</span> x1 = ..., y1 = ..., x2 = ..., y2 = ...;
+<span class="typ">Color</span> color = ...;
+
+<span class="cmt">// NIE możesz tu rysować bezpośrednio!</span>
+<span class="cmt">// ❌ gc.strokeLine(x1, y1, x2, y2);  ← BŁĄD (zły wątek)</span>
+
+<span class="cmt">// ✅ Zawsze przez Platform.runLater():</span>
+<span class="typ">Platform</span>.<span class="met">runLater</span>(() -&gt; {
+    gc.<span class="met">setStroke</span>(color);
+    gc.<span class="met">strokeLine</span>(x1 + offsetX, y1 + offsetY,
+                  x2 + offsetX, y2 + offsetY);
+});</pre>
+      </div>
+
+      <h3>Uruchomienie serwera razem z JavaFX</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Application.start()</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">App</span> <span class="kw">extends</span> <span class="cls">Application</span> {
+
+    <span class="kw">@Override</span>
+    <span class="kw">public void</span> <span class="met">start</span>(<span class="typ">Stage</span> stage) {
+        <span class="cmt">// Serwer w osobnym wątku (żeby nie blokował GUI)</span>
+        <span class="cls">Server</span> server = <span class="kw">new</span> <span class="cls">Server</span>(gc);  <span class="cmt">// przekaż GraphicsContext</span>
+        <span class="kw">new</span> <span class="typ">Thread</span>(server::<span class="met">listen</span>).<span class="met">start</span>();
+
+        <span class="cmt">// Normalny setup sceny JavaFX...</span>
+        <span class="typ">Scene</span> scene = <span class="kw">new</span> <span class="typ">Scene</span>(root, <span class="num">500</span>, <span class="num">500</span>);
+
+        <span class="cmt">// Obsługa strzałek klawiatury</span>
+        scene.<span class="met">setOnKeyPressed</span>(e -&gt; {
+            <span class="kw">switch</span> (e.<span class="met">getCode</span>()) {
+                <span class="kw">case</span> UP    -&gt; offsetY -= <span class="num">10</span>;
+                <span class="kw">case</span> DOWN  -&gt; offsetY += <span class="num">10</span>;
+                <span class="kw">case</span> LEFT  -&gt; offsetX -= <span class="num">10</span>;
+                <span class="kw">case</span> RIGHT -&gt; offsetX += <span class="num">10</span>;
+            }
+            <span class="met">redrawAll</span>();  <span class="cmt">// przerysuj wszystkie zapamiętane odcinki</span>
+        });
+    }
+}</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 6: Enum -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div>
+          <div class="section-title">Enum z metodami ✂️🪨📄</div>
+          <div class="section-sub">Papier-kamień-nożyce z K2 2024 — wzorzec do zapamiętania</div>
+        </div>
+      </div>
+
+      <p>W Javie <code>enum</code> to nie tylko lista stałych — może mieć metody, jak zwykła klasa. To bardzo elegancki sposób na enkapsulację logiki gry.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Gesture.java</span>
+        </div>
+        <pre><span class="kw">public enum</span> <span class="cls">Gesture</span> {
+    ROCK, PAPER, SCISSORS;
+
+    <span class="cmt">// Konwertuj tekst od klienta na gest</span>
+    <span class="kw">public static</span> <span class="cls">Gesture</span> <span class="met">fromString</span>(<span class="typ">String</span> s) {
+        <span class="kw">return switch</span> (s.<span class="met">toLowerCase</span>().<span class="met">trim</span>()) {
+            <span class="kw">case</span> <span class="str">"r"</span> -&gt; ROCK;
+            <span class="kw">case</span> <span class="str">"p"</span> -&gt; PAPER;
+            <span class="kw">case</span> <span class="str">"s"</span> -&gt; SCISSORS;
+            <span class="kw">default</span> -&gt; <span class="kw">throw new</span> <span class="typ">IllegalArgumentException</span>(<span class="str">"Nieznany gest: "</span> + s);
+        };
+    }
+
+    <span class="cmt">// Porównaj z innym gestem</span>
+    <span class="cmt">// Zwraca:  1 jeśli THIS wygrywa</span>
+    <span class="cmt">//          0 jeśli remis</span>
+    <span class="cmt">//         -1 jeśli THIS przegrywa</span>
+    <span class="kw">public int</span> <span class="met">compareWith</span>(<span class="cls">Gesture</span> other) {
+        <span class="kw">if</span> (<span class="kw">this</span> == other) <span class="kw">return</span> <span class="num">0</span>;  <span class="cmt">// remis</span>
+        <span class="kw">return switch</span> (<span class="kw">this</span>) {
+            <span class="kw">case</span> ROCK     -&gt; other == SCISSORS ? <span class="num">1</span> : -<span class="num">1</span>;
+            <span class="kw">case</span> PAPER    -&gt; other == ROCK     ? <span class="num">1</span> : -<span class="num">1</span>;
+            <span class="kw">case</span> SCISSORS -&gt; other == PAPER    ? <span class="num">1</span> : -<span class="num">1</span>;
+        };
+    }
+}</pre>
+      </div>
+
+      <div class="callout good">
+        <span class="callout-icon">✅</span>
+        <div><strong>Użycie:</strong>
+        <code>Gesture g = Gesture.fromString("r");</code> → <code>ROCK</code><br>
+        <code>ROCK.compareWith(SCISSORS)</code> → <code>1</code> (ROCK wygrywa)<br>
+        <code>ROCK.compareWith(PAPER)</code> → <code>-1</code> (ROCK przegrywa)</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 7: Interfejsy funkcyjne -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div>
+          <div class="section-title">Interfejsy funkcyjne — wzorzec callback 🔔</div>
+          <div class="section-sub">Jak powiadomić serwer gdy gra się skończy</div>
+        </div>
+      </div>
+
+      <p>Interfejs funkcyjny to interfejs z <strong>jedną metodą</strong>. Można go przekazać jako argument, przechowywać w polu i wywołać w odpowiednim momencie. To jak zostawienie karteczki "zadzwoń do mnie gdy X".</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — wzorzec onEnd w klasie Duel</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Duel</span> {
+
+    <span class="kw">private</span> <span class="cls">Player</span> player1, player2;
+    <span class="kw">private</span> <span class="cls">Gesture</span> gesture1, gesture2;
+
+    <span class="cmt">// Pole callback — "co zrobić gdy gra się skończy"</span>
+    <span class="cmt">// Runnable = interfejs funkcyjny z metodą run()</span>
+    <span class="kw">private</span> <span class="typ">Runnable</span> onEnd;
+
+    <span class="kw">public void</span> <span class="met">setOnEnd</span>(<span class="typ">Runnable</span> onEnd) {
+        <span class="kw">this</span>.onEnd = onEnd;
+    }
+
+    <span class="kw">public synchronized void</span> <span class="met">handleGesture</span>(<span class="cls">Player</span> player, <span class="cls">Gesture</span> gesture) {
+        <span class="kw">if</span> (player == player1) gesture1 = gesture;
+        <span class="kw">else</span>                   gesture2 = gesture;
+
+        <span class="cmt">// Gdy OBAJ gracze oddali gest — wywołaj callback</span>
+        <span class="kw">if</span> (gesture1 != <span class="kw">null</span> && gesture2 != <span class="kw">null</span>) {
+            <span class="kw">if</span> (onEnd != <span class="kw">null</span>) onEnd.<span class="met">run</span>();
+        }
+    }
+
+    <span class="cmt">// Wynik gry: null = remis, inaczej zwycięzca i przegrany</span>
+    <span class="kw">public</span> <span class="cls">Result</span> <span class="met">evaluate</span>() {
+        <span class="kw">int</span> cmp = gesture1.<span class="met">compareWith</span>(gesture2);
+        <span class="kw">if</span> (cmp == <span class="num">0</span>) <span class="kw">return null</span>;  <span class="cmt">// remis</span>
+        <span class="kw">return</span> cmp &gt; <span class="num">0</span>
+            ? <span class="kw">new</span> <span class="cls">Result</span>(player1, player2)
+            : <span class="kw">new</span> <span class="cls">Result</span>(player2, player1);
+    }
+
+    <span class="cmt">// Zagnieżdżony rekord — wynik pojedynku</span>
+    <span class="kw">public record</span> <span class="cls">Result</span>(<span class="cls">Player</span> winner, <span class="cls">Player</span> loser) {}
+}</pre>
+      </div>
+
+      <h3>Jak to połączyć w Server.startDuel()</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Server.startDuel()</span>
+        </div>
+        <pre><span class="kw">private void</span> <span class="met">startDuel</span>(<span class="cls">ClientHandler</span> p1, <span class="cls">ClientHandler</span> p2) {
+    <span class="cls">Duel</span> duel = <span class="kw">new</span> <span class="cls">Duel</span>(p1, p2);
+
+    <span class="cmt">// Lambda jako Runnable — wywoła się gdy obaj oddadzą gest</span>
+    duel.<span class="met">setOnEnd</span>(() -&gt; {
+        <span class="cls">Duel</span>.<span class="cls">Result</span> result = duel.<span class="met">evaluate</span>();
+        <span class="kw">if</span> (result == <span class="kw">null</span>) {
+            p1.<span class="met">sendMessage</span>(<span class="str">"Remis!"</span>);
+            p2.<span class="met">sendMessage</span>(<span class="str">"Remis!"</span>);
+        } <span class="kw">else</span> {
+            result.<span class="met">winner</span>().<span class="met">sendMessage</span>(<span class="str">"Wygrałeś! 🎉"</span>);
+            result.<span class="met">loser</span>().<span class="met">sendMessage</span>(<span class="str">"Przegrałeś..."</span>);
+            db.<span class="met">updatePoints</span>(result.<span class="met">winner</span>().<span class="met">getLogin</span>(), +<span class="num">1</span>);
+            db.<span class="met">updatePoints</span>(result.<span class="met">loser</span>().<span class="met">getLogin</span>(), -<span class="num">1</span>);
+        }
+    });
+
+    p1.<span class="met">sendMessage</span>(<span class="str">"Pojedynek rozpoczęty! Wpisz r, p lub s:"</span>);
+    p2.<span class="met">sendMessage</span>(<span class="str">"Pojedynek rozpoczęty! Wpisz r, p lub s:"</span>);
+}</pre>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <div><strong>Gotowe interfejsy funkcyjne w Javie:</strong><br>
+        <code>Runnable</code> — brak argumentów, brak wyniku → <code>void run()</code><br>
+        <code>Consumer&lt;T&gt;</code> — jeden argument, brak wyniku → <code>void accept(T t)</code><br>
+        <code>Supplier&lt;T&gt;</code> — brak argumentów, zwraca T → <code>T get()</code><br>
+        <code>Function&lt;T,R&gt;</code> — jeden argument, zwraca R → <code>R apply(T t)</code></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 8: JUnit 5 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div>
+          <div class="section-title">JUnit 5 — testy jednostkowe ✅</div>
+          <div class="section-sub">Pojawiło się w K2 2024 — mogą powtórzyć</div>
+        </div>
+      </div>
+
+      <p>Testy jednostkowe sprawdzają czy małe kawałki kodu działają poprawnie. W JUnit 5 każda metoda oznaczona <code>@Test</code> jest jednym testem.</p>
+
+      <h3>Zależność w pom.xml</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">XML — pom.xml</span>
+        </div>
+        <pre>&lt;<span class="kw">dependency</span>&gt;
+    &lt;<span class="kw">groupId</span>&gt;org.junit.jupiter&lt;/<span class="kw">groupId</span>&gt;
+    &lt;<span class="kw">artifactId</span>&gt;junit-jupiter&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;<span class="kw">version</span>&gt;5.10.0&lt;/<span class="kw">version</span>&gt;
+    &lt;<span class="kw">scope</span>&gt;test&lt;/<span class="kw">scope</span>&gt;
+&lt;/<span class="kw">dependency</span>&gt;</pre>
+      </div>
+
+      <h3>Przykładowe testy dla Duel</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — DuelTest.java</span>
+        </div>
+        <pre><span class="kw">import</span> org.junit.jupiter.api.Test;
+<span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="kw">class</span> <span class="cls">DuelTest</span> {
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="met">testObajeGraczeWPojedynku</span>() {
+        <span class="cls">Player</span> p1 = <span class="kw">new</span> <span class="cls">Player</span>();
+        <span class="cls">Player</span> p2 = <span class="kw">new</span> <span class="cls">Player</span>();
+        <span class="cls">Duel</span> duel = <span class="kw">new</span> <span class="cls">Duel</span>(p1, p2);
+
+        <span class="met">assertTrue</span>(p1.<span class="met">isDuelling</span>());   <span class="cmt">// p1 jest w pojedynku</span>
+        <span class="met">assertTrue</span>(p2.<span class="met">isDuelling</span>());   <span class="cmt">// p2 też</span>
+    }
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="met">testWygranaPierwszego</span>() {
+        <span class="cls">Player</span> p1 = <span class="kw">new</span> <span class="cls">Player</span>();
+        <span class="cls">Player</span> p2 = <span class="kw">new</span> <span class="cls">Player</span>();
+        <span class="cls">Duel</span> duel = <span class="kw">new</span> <span class="cls">Duel</span>(p1, p2);
+
+        duel.<span class="met">handleGesture</span>(p1, <span class="cls">Gesture</span>.ROCK);
+        duel.<span class="met">handleGesture</span>(p2, <span class="cls">Gesture</span>.SCISSORS);
+
+        <span class="cls">Duel</span>.<span class="cls">Result</span> result = duel.<span class="met">evaluate</span>();
+        <span class="met">assertNotNull</span>(result);            <span class="cmt">// nie remis</span>
+        <span class="met">assertEquals</span>(p1, result.<span class="met">winner</span>()); <span class="cmt">// p1 wygrał</span>
+    }
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="met">testRemis</span>() {
+        <span class="cls">Player</span> p1 = <span class="kw">new</span> <span class="cls">Player</span>();
+        <span class="cls">Player</span> p2 = <span class="kw">new</span> <span class="cls">Player</span>();
+        <span class="cls">Duel</span> duel = <span class="kw">new</span> <span class="cls">Duel</span>(p1, p2);
+
+        duel.<span class="met">handleGesture</span>(p1, <span class="cls">Gesture</span>.PAPER);
+        duel.<span class="met">handleGesture</span>(p2, <span class="cls">Gesture</span>.PAPER);
+
+        <span class="met">assertNull</span>(duel.<span class="met">evaluate</span>());  <span class="cmt">// null = remis</span>
+    }
+}</pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metoda asercji</th><th>Co sprawdza</th><th>Przykład</th></tr></thead>
+          <tbody>
+            <tr><td><code>assertTrue(x)</code></td><td>x jest true</td><td><code>assertTrue(p.isDuelling())</code></td></tr>
+            <tr><td><code>assertFalse(x)</code></td><td>x jest false</td><td><code>assertFalse(p.isDuelling())</code></td></tr>
+            <tr><td><code>assertNull(x)</code></td><td>x jest null</td><td><code>assertNull(duel.evaluate())</code></td></tr>
+            <tr><td><code>assertNotNull(x)</code></td><td>x nie jest null</td><td><code>assertNotNull(result)</code></td></tr>
+            <tr><td><code>assertEquals(a, b)</code></td><td>a równa się b</td><td><code>assertEquals(p1, result.winner())</code></td></tr>
+            <tr><td><code>assertThrows(E, f)</code></td><td>f rzuca wyjątek E</td><td><code>assertThrows(IOException.class, ...)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 9: Gotowy schemat -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <div>
+          <div class="section-title">Gotowy schemat projektu 🗂️</div>
+          <div class="section-sub">Struktura którą możesz zastosować do każdego zadania</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Struktura pakietów</span>
+        </div>
+        <pre>src/main/java/
+├── server/
+│   ├── <span class="cls">Server</span>.java          <span class="cmt">← ServerSocket, lista klientów, broadcast</span>
+│   ├── <span class="cls">ClientHandler</span>.java   <span class="cmt">← Runnable, obsługa jednego klienta</span>
+│   └── <span class="cls">Database</span>.java        <span class="cmt">← SQLite: authenticate, update, ranking</span>
+├── game/  (jeśli jest gra)
+│   ├── <span class="cls">Gesture</span>.java         <span class="cmt">← enum z fromString() i compareWith()</span>
+│   ├── <span class="cls">Player</span>.java          <span class="cmt">← duel, makeGesture, isDuelling</span>
+│   └── <span class="cls">Duel</span>.java            <span class="cmt">← gracze, gesty, evaluate(), onEnd</span>
+├── <span class="cls">App</span>.java               <span class="cmt">← extends Application (tylko gdy jest JavaFX)</span>
+└── <span class="cls">Main</span>.java              <span class="cmt">← main() gdy nie ma JavaFX</span>
+
+src/test/java/
+└── <span class="cls">DuelTest</span>.java          <span class="cmt">← testy JUnit 5</span></pre>
+      </div>
+
+      <h3>Kolejność pisania (sugerowana)</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">Server + listen() + main()</div>
+            <p>Samo <code>ServerSocket</code> + pętla <code>accept()</code>. Sprawdź czy serwer startuje.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">ClientHandler z pętlą odczytu</div>
+            <p>Czytaj linie, drukuj na konsoli. Sprawdź czy klient może się połączyć (nc lub telnet).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">Lista klientów + broadcast</div>
+            <p>Dodaj synchronizedList, metody add/remove, broadcast.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">Database + autentykacja</div>
+            <p>SQLite, tabela users, metoda authenticate(). Podepnij do ClientHandler.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">Logika gry / aplikacji</div>
+            <p>Enum, Player, Duel, obsługa gestów, evaluate().</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <div class="step-title">Integracja + testy JUnit</div>
+            <p>Połącz wszystko, napisz testy, sprawdź edge case'y.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 10: Swing -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <div>
+          <div class="section-title">Java Swing — GUI bez JavaFX 🪟</div>
+          <div class="section-sub">Okna, przyciski, pola tekstowe — klasyczny interfejs graficzny</div>
+        </div>
+      </div>
+
+      <p>Swing to klasyczna biblioteka GUI wbudowana w Javę (pakiet <code>javax.swing</code>). Nie wymaga żadnych dodatkowych zależności — wystarczy import. Swing działa na wszystkich systemach, choć wygląda bardziej "oldschoolowo" niż JavaFX.</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div>
+          <strong>Swing vs JavaFX:</strong> Swing jest starszy i prostszy do szybkiego prototypowania. JavaFX ma FXML i bardziej nowoczesny wygląd. Na kolokwium — jeśli zadanie nie precyzuje, Swing jest OK i łatwiej go napisać z pamięci.
+        </div>
+      </div>
+
+      <h3>Pierwsze okno — JFrame</h3>
+      <p><code>JFrame</code> to główne okno aplikacji. Niemal zawsze rozszerzasz tę klasę lub tworzysz jej instancję w konstruktorze.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — MinimalneOkno.java</span>
+        </div>
+        <pre><span class="kw">import</span> javax.swing.*;
+
+<span class="kw">public class</span> <span class="cls">MinimalneOkno</span> <span class="kw">extends</span> <span class="cls">JFrame</span> {
+
+    <span class="kw">public</span> <span class="cls">MinimalneOkno</span>() {
+        <span class="met">setTitle</span>(<span class="str">"Moje pierwsze okno"</span>);   <span class="cmt">// tytuł na pasku</span>
+        <span class="met">setSize</span>(<span class="num">400</span>, <span class="num">300</span>);               <span class="cmt">// szerokość x wysokość w pikselach</span>
+        <span class="met">setDefaultCloseOperation</span>(<span class="cls">JFrame</span>.<span class="num">EXIT_ON_CLOSE</span>); <span class="cmt">// zamknij program gdy okno jest zamknięte</span>
+        <span class="met">setLocationRelativeTo</span>(<span class="kw">null</span>);     <span class="cmt">// wyśrodkuj na ekranie</span>
+        <span class="met">setVisible</span>(<span class="kw">true</span>);               <span class="cmt">// pokaż okno!</span>
+    }
+
+    <span class="kw">public static void</span> <span class="met">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// ZAWSZE uruchamiaj Swing na Event Dispatch Thread (EDT)</span>
+        <span class="cls">SwingUtilities</span>.<span class="met">invokeLater</span>(() -&gt; <span class="kw">new</span> <span class="cls">MinimalneOkno</span>());
+    }
+}</pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>SwingUtilities.invokeLater()</strong> — Swing nie jest thread-safe. Wszystkie operacje na GUI muszą odbywać się na <strong>Event Dispatch Thread (EDT)</strong>. Używaj <code>invokeLater()</code> w <code>main()</code>. To odpowiednik <code>Platform.runLater()</code> z JavaFX!</div>
+      </div>
+
+      <h3>Najważniejsze komponenty Swing</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Komponent</th><th>Do czego służy</th><th>Przykład tworzenia</th></tr></thead>
+          <tbody>
+            <tr><td><code>JLabel</code></td><td>Wyświetla tekst lub obrazek (nieedytowalny)</td><td><code>new JLabel("Witaj!")</code></td></tr>
+            <tr><td><code>JButton</code></td><td>Przycisk do klikania</td><td><code>new JButton("Kliknij mnie")</code></td></tr>
+            <tr><td><code>JTextField</code></td><td>Pole tekstowe w jednej linii</td><td><code>new JTextField(20)</code></td></tr>
+            <tr><td><code>JTextArea</code></td><td>Wieloliniowe pole tekstowe</td><td><code>new JTextArea(10, 30)</code></td></tr>
+            <tr><td><code>JPasswordField</code></td><td>Pole hasła (gwiazdki)</td><td><code>new JPasswordField(20)</code></td></tr>
+            <tr><td><code>JCheckBox</code></td><td>Checkbox (tak/nie)</td><td><code>new JCheckBox("Zapamiętaj mnie")</code></td></tr>
+            <tr><td><code>JComboBox</code></td><td>Lista rozwijana</td><td><code>new JComboBox&lt;&gt;(new String[]{"A","B"})</code></td></tr>
+            <tr><td><code>JList</code></td><td>Lista elementów do wyboru</td><td><code>new JList&lt;&gt;(model)</code></td></tr>
+            <tr><td><code>JPanel</code></td><td>Kontener grupujący inne komponenty</td><td><code>new JPanel()</code></td></tr>
+            <tr><td><code>JScrollPane</code></td><td>Dodaje pasek przewijania do komponentu</td><td><code>new JScrollPane(textArea)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Layouty — jak rozmieścić komponenty</h3>
+      <p>Swing używa <strong>Layout Managerów</strong> do automatycznego rozmieszczania komponentów w panelu. Najważniejsze:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Layout</th><th>Zachowanie</th><th>Kiedy używać</th></tr></thead>
+          <tbody>
+            <tr><td><code>FlowLayout</code></td><td>Układa w rzędach od lewej do prawej (domyślny dla JPanel)</td><td>Prosty rząd przycisków</td></tr>
+            <tr><td><code>BorderLayout</code></td><td>5 stref: NORTH, SOUTH, EAST, WEST, CENTER (domyślny dla JFrame)</td><td>Typowy układ okna: pasek górny + środek + dół</td></tr>
+            <tr><td><code>GridLayout</code></td><td>Siatka równych komórek (n wierszy × m kolumn)</td><td>Kalkulator, formularz z etykietami</td></tr>
+            <tr><td><code>BoxLayout</code></td><td>Układa pionowo lub poziomo</td><td>Formularz z polami w kolumnie</td></tr>
+            <tr><td><code>GridBagLayout</code></td><td>Elastyczna siatka z kontrolą rozmiarów</td><td>Złożone formularze (trudniejszy)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Kompletny przykład — formularz logowania</h3>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — FormularzLogowania.java</span>
+        </div>
+        <pre><span class="kw">import</span> javax.swing.*;
+<span class="kw">import</span> java.awt.*;
+
+<span class="kw">public class</span> <span class="cls">FormularzLogowania</span> <span class="kw">extends</span> <span class="cls">JFrame</span> {
+
+    <span class="cmt">// Pola — przechowuj jako pola klasy żeby mieć dostęp w listenerach</span>
+    <span class="kw">private</span> <span class="cls">JTextField</span> loginField;
+    <span class="kw">private</span> <span class="cls">JPasswordField</span> passwordField;
+    <span class="kw">private</span> <span class="cls">JLabel</span> statusLabel;
+
+    <span class="kw">public</span> <span class="cls">FormularzLogowania</span>() {
+        <span class="met">setTitle</span>(<span class="str">"Logowanie"</span>);
+        <span class="met">setSize</span>(<span class="num">350</span>, <span class="num">200</span>);
+        <span class="met">setDefaultCloseOperation</span>(<span class="cls">JFrame</span>.<span class="num">EXIT_ON_CLOSE</span>);
+        <span class="met">setLocationRelativeTo</span>(<span class="kw">null</span>);
+
+        <span class="cmt">// Panel główny z GridLayout (3 wiersze, 2 kolumny)</span>
+        <span class="cls">JPanel</span> panel = <span class="kw">new</span> <span class="cls">JPanel</span>(<span class="kw">new</span> <span class="cls">GridLayout</span>(<span class="num">4</span>, <span class="num">2</span>, <span class="num">8</span>, <span class="num">8</span>));
+        panel.<span class="met">setBorder</span>(<span class="cls">BorderFactory</span>.<span class="met">createEmptyBorder</span>(<span class="num">16</span>, <span class="num">16</span>, <span class="num">16</span>, <span class="num">16</span>));
+
+        loginField    = <span class="kw">new</span> <span class="cls">JTextField</span>(<span class="num">15</span>);
+        passwordField = <span class="kw">new</span> <span class="cls">JPasswordField</span>(<span class="num">15</span>);
+        <span class="cls">JButton</span> loginBtn = <span class="kw">new</span> <span class="cls">JButton</span>(<span class="str">"Zaloguj"</span>);
+        statusLabel = <span class="kw">new</span> <span class="cls">JLabel</span>(<span class="str">""</span>);
+
+        panel.<span class="met">add</span>(<span class="kw">new</span> <span class="cls">JLabel</span>(<span class="str">"Login:"</span>));
+        panel.<span class="met">add</span>(loginField);
+        panel.<span class="met">add</span>(<span class="kw">new</span> <span class="cls">JLabel</span>(<span class="str">"Hasło:"</span>));
+        panel.<span class="met">add</span>(passwordField);
+        panel.<span class="met">add</span>(statusLabel);
+        panel.<span class="met">add</span>(loginBtn);
+
+        <span class="cmt">// ActionListener — co ma się stać po kliknięciu</span>
+        loginBtn.<span class="met">addActionListener</span>(e -&gt; <span class="met">handleLogin</span>());
+
+        <span class="met">add</span>(panel);  <span class="cmt">// dodaj panel do JFrame (domyślnie BorderLayout CENTER)</span>
+        <span class="met">setVisible</span>(<span class="kw">true</span>);
+    }
+
+    <span class="kw">private void</span> <span class="met">handleLogin</span>() {
+        <span class="typ">String</span> login = loginField.<span class="met">getText</span>();
+        <span class="typ">String</span> password = <span class="kw">new</span> <span class="typ">String</span>(passwordField.<span class="met">getPassword</span>()); <span class="cmt">// char[] → String</span>
+
+        <span class="kw">if</span> (login.<span class="met">equals</span>(<span class="str">"admin"</span>) &amp;&amp; password.<span class="met">equals</span>(<span class="str">"1234"</span>)) {
+            statusLabel.<span class="met">setText</span>(<span class="str">"✓ Zalogowano!"</span>);
+            statusLabel.<span class="met">setForeground</span>(<span class="cls">Color</span>.<span class="num">GREEN</span>.<span class="met">darker</span>());
+        } <span class="kw">else</span> {
+            statusLabel.<span class="met">setText</span>(<span class="str">"✗ Błędne dane"</span>);
+            statusLabel.<span class="met">setForeground</span>(<span class="cls">Color</span>.<span class="num">RED</span>);
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="met">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cls">SwingUtilities</span>.<span class="met">invokeLater</span>(<span class="cls">FormularzLogowania</span>::<span class="kw">new</span>);
+    }
+}</pre>
+      </div>
+
+      <h3>Zdarzenia (Events) — jak reagować na akcje użytkownika</h3>
+      <p>Swing używa wzorca <strong>Listener</strong>. Dodajesz nasłuchiwacz do komponentu, który zostanie wywołany gdy coś się stanie.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Listener</th><th>Komponent</th><th>Zdarzenie</th><th>Jak dodać</th></tr></thead>
+          <tbody>
+            <tr><td><code>ActionListener</code></td><td>JButton, JTextField</td><td>kliknięcie / Enter</td><td><code>btn.addActionListener(e -&gt; ...)</code></td></tr>
+            <tr><td><code>KeyListener</code></td><td>dowolny</td><td>naciśnięcie klawisza</td><td><code>field.addKeyListener(...)</code></td></tr>
+            <tr><td><code>MouseListener</code></td><td>dowolny</td><td>kliknięcie myszą</td><td><code>panel.addMouseListener(...)</code></td></tr>
+            <tr><td><code>WindowListener</code></td><td>JFrame</td><td>zamknięcie okna</td><td><code>frame.addWindowListener(...)</code></td></tr>
+            <tr><td><code>DocumentListener</code></td><td>JTextField</td><td>zmiana tekstu w czasie rzeczywistym</td><td><code>field.getDocument().addDocumentListener(...)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — przykłady listenerów</span>
+        </div>
+        <pre><span class="cmt">// ActionListener — lambda (najczęstszy sposób)</span>
+button.<span class="met">addActionListener</span>(e -&gt; {
+    System.out.<span class="met">println</span>(<span class="str">"Kliknięto!"</span>);
+    label.<span class="met">setText</span>(<span class="str">"Kliknięto przycisk"</span>);
+});
+
+<span class="cmt">// KeyListener — pełna implementacja interfejsu</span>
+textField.<span class="met">addKeyListener</span>(<span class="kw">new</span> <span class="cls">KeyAdapter</span>() {   <span class="cmt">// KeyAdapter = pusta implementacja KeyListener</span>
+    <span class="kw">@Override</span>
+    <span class="kw">public void</span> <span class="met">keyPressed</span>(<span class="cls">KeyEvent</span> e) {
+        <span class="kw">if</span> (e.<span class="met">getKeyCode</span>() == <span class="cls">KeyEvent</span>.<span class="num">VK_ENTER</span>) {
+            <span class="met">handleSend</span>();   <span class="cmt">// wyślij po wciśnięciu Enter</span>
+        }
+    }
+});
+
+<span class="cmt">// DocumentListener — reaguj na każdą zmianę tekstu na bieżąco</span>
+textField.<span class="met">getDocument</span>().<span class="met">addDocumentListener</span>(<span class="kw">new</span> <span class="cls">DocumentListener</span>() {
+    <span class="kw">public void</span> <span class="met">insertUpdate</span>(<span class="cls">DocumentEvent</span> e)  { <span class="met">onTextChange</span>(); }
+    <span class="kw">public void</span> <span class="met">removeUpdate</span>(<span class="cls">DocumentEvent</span> e)  { <span class="met">onTextChange</span>(); }
+    <span class="kw">public void</span> <span class="met">changedUpdate</span>(<span class="cls">DocumentEvent</span> e) { }
+});</pre>
+      </div>
+
+      <h3>Swing + wątki — aktualizacja GUI z innego wątku</h3>
+      <p>Tak jak JavaFX ma <code>Platform.runLater()</code>, Swing ma <code>SwingUtilities.invokeLater()</code>. Gdy odbiorca TCP (inny wątek) chce zmienić coś w GUI, <strong>musisz</strong> to opakować:</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — aktualizacja GUI z wątku sieciowego</span>
+        </div>
+        <pre><span class="cmt">// W wątku odbierającym wiadomości z serwera:</span>
+<span class="kw">while</span> ((line = in.<span class="met">readLine</span>()) != <span class="kw">null</span>) {
+    <span class="kw">final</span> <span class="typ">String</span> msg = line;
+    <span class="cls">SwingUtilities</span>.<span class="met">invokeLater</span>(() -&gt; {
+        <span class="cmt">// To jest bezpieczne — wykonuje się na EDT</span>
+        chatArea.<span class="met">append</span>(msg + <span class="str">"\n"</span>);
+        chatArea.<span class="met">setCaretPosition</span>(chatArea.<span class="met">getDocument</span>().<span class="met">getLength</span>()); <span class="cmt">// scroll na dół</span>
+    });
+}</pre>
+      </div>
+
+      <div class="callout good">
+        <span class="callout-icon">✅</span>
+        <div>
+          <strong>Dobra praktyka:</strong> zmienna <code>msg</code> musi być <code>final</code> (lub efektywnie final) żeby można ją używać w lambdzie. Zawsze tak rób gdy przekazujesz zmienną pętli do <code>invokeLater</code>.
+        </div>
+      </div>
+
+      <h3>Kompletny czat Swing — klient z GUI</h3>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — ChatClient.java (GUI Swing + socket)</span>
+        </div>
+        <pre><span class="kw">import</span> javax.swing.*;
+<span class="kw">import</span> java.awt.*;
+<span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+
+<span class="kw">public class</span> <span class="cls">ChatClient</span> <span class="kw">extends</span> <span class="cls">JFrame</span> {
+
+    <span class="kw">private</span> <span class="cls">JTextArea</span> chatArea;
+    <span class="kw">private</span> <span class="cls">JTextField</span> inputField;
+    <span class="kw">private</span> <span class="cls">PrintWriter</span> out;
+
+    <span class="kw">public</span> <span class="cls">ChatClient</span>() {
+        <span class="met">setTitle</span>(<span class="str">"Czat"</span>);
+        <span class="met">setSize</span>(<span class="num">500</span>, <span class="num">400</span>);
+        <span class="met">setDefaultCloseOperation</span>(<span class="cls">JFrame</span>.<span class="num">EXIT_ON_CLOSE</span>);
+
+        <span class="cmt">// Pole z historią wiadomości (tylko do odczytu)</span>
+        chatArea = <span class="kw">new</span> <span class="cls">JTextArea</span>();
+        chatArea.<span class="met">setEditable</span>(<span class="kw">false</span>);
+        chatArea.<span class="met">setLineWrap</span>(<span class="kw">true</span>);
+        <span class="cls">JScrollPane</span> scroll = <span class="kw">new</span> <span class="cls">JScrollPane</span>(chatArea);  <span class="cmt">// dodaj pasek przewijania</span>
+
+        <span class="cmt">// Pole do wpisywania + przycisk wysyłania</span>
+        inputField = <span class="kw">new</span> <span class="cls">JTextField</span>();
+        <span class="cls">JButton</span> sendBtn = <span class="kw">new</span> <span class="cls">JButton</span>(<span class="str">"Wyślij"</span>);
+
+        <span class="cmt">// Panel dolny z polem i przyciskiem</span>
+        <span class="cls">JPanel</span> bottomPanel = <span class="kw">new</span> <span class="cls">JPanel</span>(<span class="kw">new</span> <span class="cls">BorderLayout</span>());
+        bottomPanel.<span class="met">add</span>(inputField, <span class="cls">BorderLayout</span>.<span class="num">CENTER</span>);
+        bottomPanel.<span class="met">add</span>(sendBtn, <span class="cls">BorderLayout</span>.<span class="num">EAST</span>);
+
+        <span class="met">add</span>(scroll, <span class="cls">BorderLayout</span>.<span class="num">CENTER</span>);
+        <span class="met">add</span>(bottomPanel, <span class="cls">BorderLayout</span>.<span class="num">SOUTH</span>);
+
+        <span class="cmt">// Wyślij po kliknięciu lub Enter</span>
+        sendBtn.<span class="met">addActionListener</span>(e -&gt; <span class="met">sendMessage</span>());
+        inputField.<span class="met">addActionListener</span>(e -&gt; <span class="met">sendMessage</span>());
+
+        <span class="met">setVisible</span>(<span class="kw">true</span>);
+        <span class="met">connectToServer</span>();
+    }
+
+    <span class="kw">private void</span> <span class="met">connectToServer</span>() {
+        <span class="kw">new</span> <span class="cls">Thread</span>(() -&gt; {
+            <span class="kw">try</span> (<span class="cls">Socket</span> socket = <span class="kw">new</span> <span class="cls">Socket</span>(<span class="str">"localhost"</span>, <span class="num">12345</span>)) {
+                out = <span class="kw">new</span> <span class="cls">PrintWriter</span>(socket.<span class="met">getOutputStream</span>(), <span class="kw">true</span>);
+                <span class="cls">BufferedReader</span> in = <span class="kw">new</span> <span class="cls">BufferedReader</span>(
+                    <span class="kw">new</span> <span class="cls">InputStreamReader</span>(socket.<span class="met">getInputStream</span>()));
+
+                <span class="typ">String</span> line;
+                <span class="kw">while</span> ((line = in.<span class="met">readLine</span>()) != <span class="kw">null</span>) {
+                    <span class="kw">final</span> <span class="typ">String</span> msg = line;
+                    <span class="cls">SwingUtilities</span>.<span class="met">invokeLater</span>(() -&gt;
+                        chatArea.<span class="met">append</span>(msg + <span class="str">"\n"</span>));  <span class="cmt">// bezpieczna aktualizacja GUI</span>
+                }
+            } <span class="kw">catch</span> (<span class="cls">IOException</span> e) {
+                <span class="cls">SwingUtilities</span>.<span class="met">invokeLater</span>(() -&gt;
+                    chatArea.<span class="met">append</span>(<span class="str">"[Rozłączono z serwerem]\n"</span>));
+            }
+        }).<span class="met">start</span>();
+    }
+
+    <span class="kw">private void</span> <span class="met">sendMessage</span>() {
+        <span class="typ">String</span> text = inputField.<span class="met">getText</span>().<span class="met">trim</span>();
+        <span class="kw">if</span> (!text.<span class="met">isEmpty</span>() &amp;&amp; out != <span class="kw">null</span>) {
+            out.<span class="met">println</span>(text);
+            inputField.<span class="met">setText</span>(<span class="str">""</span>);   <span class="cmt">// wyczyść pole po wysłaniu</span>
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="met">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cls">SwingUtilities</span>.<span class="met">invokeLater</span>(<span class="cls">ChatClient</span>::<span class="kw">new</span>);
+    }
+}</pre>
+      </div>
+
+      <h3>Dialogi — JOptionPane</h3>
+      <p><code>JOptionPane</code> to gotowe okienka dialogowe — szybko i bez pisania własnych klas.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — JOptionPane — gotowe dialogi</span>
+        </div>
+        <pre><span class="cmt">// Komunikat informacyjny</span>
+<span class="cls">JOptionPane</span>.<span class="met">showMessageDialog</span>(<span class="kw">this</span>, <span class="str">"Zalogowano pomyślnie!"</span>);
+
+<span class="cmt">// Komunikat o błędzie</span>
+<span class="cls">JOptionPane</span>.<span class="met">showMessageDialog</span>(<span class="kw">this</span>, <span class="str">"Błędne hasło!"</span>,
+    <span class="str">"Błąd"</span>, <span class="cls">JOptionPane</span>.<span class="num">ERROR_MESSAGE</span>);
+
+<span class="cmt">// Pytanie tak/nie → zwraca JOptionPane.YES_OPTION lub NO_OPTION</span>
+<span class="kw">int</span> choice = <span class="cls">JOptionPane</span>.<span class="met">showConfirmDialog</span>(<span class="kw">this</span>,
+    <span class="str">"Czy na pewno chcesz wyjść?"</span>, <span class="str">"Potwierdź"</span>,
+    <span class="cls">JOptionPane</span>.<span class="num">YES_NO_OPTION</span>);
+<span class="kw">if</span> (choice == <span class="cls">JOptionPane</span>.<span class="num">YES_OPTION</span>) <span class="cls">System</span>.<span class="met">exit</span>(<span class="num">0</span>);
+
+<span class="cmt">// Pole do wpisania tekstu → zwraca wpisany String lub null (Anuluj)</span>
+<span class="typ">String</span> name = <span class="cls">JOptionPane</span>.<span class="met">showInputDialog</span>(<span class="kw">this</span>, <span class="str">"Podaj swój nick:"</span>);
+<span class="kw">if</span> (name != <span class="kw">null</span> &amp;&amp; !name.<span class="met">isBlank</span>()) {
+    <span class="cmt">// użytkownik wpisał coś</span>
+}</pre>
+      </div>
+
+      <h3>Podsumowanie — Swing vs JavaFX</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cecha</th><th>Swing</th><th>JavaFX</th></tr></thead>
+          <tbody>
+            <tr><td>Import</td><td><code>javax.swing.*</code></td><td><code>javafx.*</code> (oddzielna zależność)</td></tr>
+            <tr><td>Uruchomienie</td><td><code>SwingUtilities.invokeLater()</code></td><td><code>extends Application + launch()</code></td></tr>
+            <tr><td>Aktualizacja z wątku</td><td><code>SwingUtilities.invokeLater()</code></td><td><code>Platform.runLater()</code></td></tr>
+            <tr><td>Kontener główny</td><td><code>JFrame</code></td><td><code>Stage + Scene</code></td></tr>
+            <tr><td>Rysowanie 2D</td><td><code>paintComponent(Graphics g)</code></td><td><code>Canvas + GraphicsContext</code></td></tr>
+            <tr><td>Styling</td><td>kod Java / Look&amp;Feel</td><td>CSS</td></tr>
+            <tr><td>Wbudowane w JDK</td><td>✅ tak</td><td>❌ od JDK 11 osobno</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">🐱</span>
+        <div><strong>Schemat na kolokwium (Swing):</strong> <code>JFrame</code> → dodaj <code>JPanel</code> z layoutem → dodaj komponenty → dodaj listenery → <code>SwingUtilities.invokeLater()</code> w <code>main()</code>. Gotowe!</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 10: Co powtórzyć -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">✦</div>
+        <div>
+          <div class="section-title">Co powtórzyć przed kolokwium 🎯</div>
+          <div class="section-sub">Priorytety na podstawie 5 lat kolokwiów</div>
+        </div>
+      </div>
+
+      <h3>🔴 Krytyczne — bez tego nie napiszesz serwera</h3>
+      <ul class="checklist">
+        <li><strong>ServerSocket + Socket + accept()</strong> — schemat nasłuchiwania <span class="badge crit">★★★</span></li>
+        <li><strong>BufferedReader + PrintWriter</strong> — czytanie i wysyłanie wiadomości <span class="badge crit">★★★</span></li>
+        <li><strong>implements Runnable + new Thread().start()</strong> — każdy klient w wątku <span class="badge crit">★★★</span></li>
+        <li><strong>synchronized</strong> — ochrona listy klientów i broadcast <span class="badge crit">★★★</span></li>
+        <li><strong>SQLite: DriverManager + PreparedStatement + ResultSet</strong> <span class="badge crit">★★★</span></li>
+        <li><strong>finally { server.removeClient(this) }</strong> — sprzątanie po kliencie <span class="badge crit">★★★</span></li>
+      </ul>
+
+      <h3>🟡 Ważne — pojawia się regularnie</h3>
+      <ul class="checklist">
+        <li><strong>Swing: JFrame + JPanel + komponenty</strong> — konstruktor okna, layout, setVisible <span class="badge imp">★★☆</span></li>
+        <li><strong>ActionListener lambda</strong> — <code>button.addActionListener(e -&gt; ...)</code> <span class="badge imp">★★☆</span></li>
+        <li><strong>SwingUtilities.invokeLater()</strong> — aktualizacja GUI z innego wątku (odpowiednik Platform.runLater) <span class="badge imp">★★☆</span></li>
+        <li><strong>Platform.runLater()</strong> — aktualizacja JavaFX z innego wątku <span class="badge imp">★★☆</span></li>
+        <li><strong>enum z metodami</strong> — fromString(), compareWith() <span class="badge imp">★★☆</span></li>
+        <li><strong>Runnable / Consumer jako pole klasy</strong> — wzorzec callback / onEnd <span class="badge imp">★★☆</span></li>
+        <li><strong>record Result(...)</strong> — zagnieżdżony rekord wynikowy <span class="badge imp">★★☆</span></li>
+        <li><strong>GraphicsContext: setStroke, strokeLine, fillRect, fillText</strong> <span class="badge imp">★★☆</span></li>
+        <li><strong>Dziedziczenie: ClientHandler extends Player</strong> <span class="badge imp">★★☆</span></li>
+      </ul>
+
+      <h3>🟢 Przydatne — do wyższych ocen</h3>
+      <ul class="checklist">
+        <li><strong>JUnit 5:</strong> @Test, assertTrue, assertNull, assertEquals <span class="badge nice">★☆☆</span></li>
+        <li><strong>Stream API:</strong> clients.stream().filter(...).findFirst() <span class="badge nice">★☆☆</span></li>
+        <li><strong>LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))</strong> <span class="badge nice">★☆☆</span></li>
+        <li><strong>Color.web("#RRGGBB")</strong> — parsowanie koloru z hex w JavaFX <span class="badge nice">★☆☆</span></li>
+        <li><strong>LinkedHashMap</strong> — mapa zachowująca kolejność (ranking) <span class="badge nice">★☆☆</span></li>
+      </ul>
+
+      <div class="callout tip" style="margin-top:24px">
+        <span class="callout-icon">🐱</span>
+        <div><strong>Złota rada:</strong> Na kolokwium zacznij od tego co umiesz i co daje punkty. Serwer bez logiki gry to lepiej niż logika gry bez serwera. Zawsze miej działający serwer który cokolwiek robi — potem rozbudowuj.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  Zrobione z <span class="heart">♥</span> na podstawie K2: 2021 · 2022 · 2023 · 2024 · 2025 + materiały laboratoryjne UMCS
+  <br>Powodzenia na kolokwium! 🐱✨
+</footer>
+
+<script>
+  // Podświetlaj aktywny link w nawigacji
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

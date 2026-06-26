@@ -1,0 +1,475 @@
+Laboratorium - Klasy i obiekty
+Zadanie 0.
+Utwórz katalog roboczy dla wszystkich projektów, które będą realizowane w tym semestrze. Załóż w tym katalogu repozytorium gita. Utwórz projekt o nazwie "svg" zawierający klasę Main z metodą statyczną main. Przetestuj kompilację i uruchomienie.
+Powiąż lokalnie założone repozytorium ze zdalnym (np. na Githubie). Wykonaj commit i push aktualnego stanu projektu.
+
+Zadanie 1.
+Zdefiniuj klasę Point posiadającą dwa publiczne, zmiennoprzecinkowe pola - współrzędne x i y. Ustaw i wyświetl te pola.
+Stwórz bezargumentową metodę toString(), która zwraca informację o współrzędnych punktu za pomocą napisu.
+
+Zadanie 2.
+W klasie Point stwórz bezargumentową metodę toSvg(), która zwróci informację o punkcie sformatowaną tak, aby można ją było wyświetlić w formacie SVG za pomocą niewielkiego okręgu.
+https://www.w3schools.com/graphics/svg_circle.asp
+
+Zadanie 3.
+Napisz publiczną metodę translate(), która przyjmie dwie współrzędne dx i dy i przesunie o te wartości pozycję punktu.
+Napisz publiczną metodę translated(), która przyjmie dwie współrzędne dx i dy, a następnie utworzy nowy punkt, który będzie przesunięty o te wartości w stosunku do pozycji oryginalnego punktu.
+
+Zadanie 4.
+Napisz klasę Segment składającą się z dwóch publicznych obiektów Point. Zdefiniuj w niej metodę length() zwracającą długość odcinka między tymi punktami.
+
+Zadanie 5.
+W klasie Main napisz metodę statyczną, która przyjmie tablicę obiektów Segment i zwróci najdłuższy segment. Następnie przenieś tę metodę do klasy Segment.
+
+
+
+Laboratorium - Enkapsulacja i konstruktory
+Zadanie 1.
+W klasie Point zmień widoczność pól na prywatną. Wygeneruj akcesory i mutatory. Napisz dwa publiczne konstruktory:
+- ustawiający punkt w zadanym położeniu,
+- bezargumentowy, ustawiający punkt w położeniu (0, 0). Zmodyfikuj pozostały kod, żeby dopasować go do wprowadzonych zmian.
+
+Zadanie 2.
+Niech klasa Segment posiada dwa prywatne pola Point. Napisz konstruktor który ustawi te pola. Sprawdź wrażliwość odcinka na zmianę współrzędnych punktów, z których został stworzony. Wygeneruj metodę toString() zwracającą informację o punkcie.
+Zmodyfikuj Segment tak, aby był niewrażliwy na zmianę pozycji punktów, z których został stworzony. W tym celu napisz w klasie Point konstruktor kopiujący.
+
+Zadanie 3.
+Zdefiniuj klasę Polygon posiadającą prywatną tablicę obiektów Point. Napisz publiczny konstruktor który przyjmie taką tablicę i ustawi ją obiekcie Polygon. Stwórz publiczne metody:
+- toString(), która zwróci informacje o punktach wielokątu,
+- toSvg(), która zwróci opis wielokąta w postaci odpowiednio sparametryzowanego znacznika <polygon>.
+
+Zadanie 4.
+Zmodyfikuj konstruktor klasy Polygon tak, aby ustawiał w polu obiektu kopię tablicy przekazanej jako argument. Następnie zmodyfikuj go tak, aby tworzył nową tablicę zapełnioną kopiami obiektów Point z oryginalnej tablicy.
+W klasie Polygon napisz konstruktor kopiujący, który wykonuje płytką kopię obiektu. Następnie zmodyfikuj go tak, aby wykonywał głęboką kopię.
+
+Zadanie 5.
+Zdefiniuj klasę SvgScene. Klasa powinna posiadać prywatną tablicę 3 referencji do obiektów Polygon. Napisz funkcję addPolygon(), która doda przekazaną referencję na obiekt Polygon do tablicy. Jeżeli miejsce się wyczerpie, powinna zacząć nadpisywać wielokąty od początku.
+
+Zadanie 6.
+W klasie SvgScene napisz metodę toSvg(), która zwróci napis utworzony z napisów zwracanych przez toSvg() wszystkich wielokątów z tablicy.
+
+Zadanie 7.
+Zdefiniuj rekord BoundingBox składający się z czterech liczb zmiennoprzecinkowych: położenia x i y lewego górnego punktu prostokątnego obrysu wielokąta, a także szerokości oraz wysokości tego obrysu. W klasie Polygon napisz metodę boundingBox(), która zwróci obiekt BoundingBox opisujący dany wielokąt.
+
+Zadanie 8.
+W klasie SvgScene napisz metodę save(), która przyjmie ścieżkę do pliku i zapisze tam plik SVG. Rozmiar obrazu w znaczniku <svg> należy obliczyć na podstawie wartości zwracanych przez metody boundingBox() tak, aby obraz zaczynał się w pozycji (0, 0) i by wyświetlone zostały wszystkie wielokąty z tablicy.
+
+
+Laboratorium - Dziedziczenie
+Zadanie 1.
+Zdefiniuj klasę Style o finalnych, publicznych polach klasy String: fillColor, strokeColor oraz Double: strokeWidth. Napisz trójargumentowy konstruktor ustawiający te wartości. Napisz publiczną metodę toSvg() zwracającą napis, będący opcją style, którą można umieścić np. w tagu <polygon>.
+
+Zmodyfikuj klasę Polygon dodając do jej konstruktora argument Style i modyfikując jej metodę toSvg(), aby uwzględniała styl. Dopuść możliwość pominięcia stylu przy konstrukcji. Wówczas należy narysować przezroczysty (fillColor) wielokąt, z czarnym obrysem (strokeColor) o grubości jednego piksela (strokeWidth).
+
+Zadanie 2.
+Do klasy Segment dodaj publiczne akcesory do punktów.
+Napisz też metodę perpendicular,(), która zwraca Segment prostopadły do tego, na rzecz którego metoda została wywołana. Nowy odcinek powinien być tej samej długości. Istniejący i nowy odcinek powinny przecinać się w swoich środkach.
+Napisz publiczną, statyczną metodę wytwórczą klasy Polygon o nazwie square. Funkcja powinna przyjąć jako argumenty: obiekt Segment, obiekt Style i zwrócić wielokąt będący kwadratem, którego przekątną jest dany odcinek.
+
+Zadanie 3.
+Utwórz klasę abstrakcyjną Shape, która otrzyma jako pole, obiekt klasy Style. Uczyń pole tego obiektu chronionym. Utwórz publiczny konstruktor, który ustawia to pole. Napisz abstrakcyjną metodę toSvg(). Zmodyfikuj klasę Polygon, aby dziedziczyła po klasie Shape.
+
+Zadanie 4.
+Napisz klasę Ellipse dziedziczącą po Shape, posiadającą prywatne pola: środek elipsy (Point), długości promieni i styl. W jej implementacji metody toSvg() powinno znaleźć się rysowanie z użyciem tagu <ellipse>.
+Zmodyfikuj klasę SvgScene, aby posiadała tablicę obiektów klasy Shape i korzystając z polimorfizmu zapisz w niej obiekty typu Polygon i Ellipse.
+
+
+Laboratorium - Abstrakcja
+Zadanie 0.
+Zapoznaj się ze zmodyfikowanym projektem. Przeanalizuj zmiany:
+- klasa Point stała się rekordem Vec2,
+- klasa Shape stała się interfejsem, usunięte zostały z niej pola,
+- usunięte zostały wszystkie fragmenty kodu związane ze stylem.
+Przetestuj działanie zmodyfikowanego projektu.
+
+Zadanie 1.
+Napisz klasę SolidFilledPolygon dziedziczącą po Polygon. Klasa powinna posiadać prywatne pole String color ustawiane, obok tablicy punktów, w konstruktorze. Przemodeluj funkcję toSvg() w interfejsie Shape tak, aby możliwe było przekazanie jej parametru typu String, który zostanie umieszczony w tagu rysowanego obiektu. Wykorzystaj poniższy kod:
+"<polygon points=\"%s\" %s />"
+W klasie SolidFilledPolygon zdefiniuj metodę toSvg, która nadpisze metodę klasy nadrzędnej. Wewnątrz tej metody wywołaj metodę toSvg klasy nadrzędnej, przekazując jej jako parametr napis powstały ze sformatowania:
+"fill=\"%s\" %s "
+kolejno kolorem i parametrem napisowym.
+Zastanów się, jakie konsekwencje dla struktury programu miałoby stworzenie analogicznej klasy dziedziczącej po klasie Ellipse oraz próba dodawania innych parametrów do tagu.
+
+Zadanie 2.
+Zdefiniuj klasę ShapeDecorator implementującą interfejs Shape, która posiadać będzie chronione pole Shape decoratedShape. Pole to powinno być ustawiane w konstruktorze. Nadpisz metodę toSvg w taki sposób, by zawierała wywołanie tej samej metody na rzecz obiektu decoratedShape.
+Po klasie ShapeDecorator podziedzicz nową klasę SolidFillShapeDecorator. Klasa ta powinna posiadać prywatne pole String color. W konstruktorze ma przyjmować obiekt klasy Shape oraz kolor wypełnienia typu String. W jej metodzie toSvg wywołaj metodę toSvg na rzecz decoratedShape, z parametrami jak w zadaniu 1.
+Utwórz dwa obiekty klasy SolidFillShapeDecorator tak, aby parametrem jednego był obiekt wielokąta, a drugiego elipsy.
+
+Zadanie 3.
+Utwórz klasę StrokeShapeDecorator posiadającą prywatne pola String color i double width, które powinny być ustawione w konstruktorze. Wywołaj metodę toSvg podobnie jak w zadaniu 2. formatując napis
+"stroke=\"%s\" stroke-width=\"%f\" "
+kolorem i grubością obrysu. Przetestuj udekorowanie tą klasą obiektów będących wynikiem poprzedniego zadania.
+
+Zadanie 4.
+Utwórz klasę TransformationDecorator odpowiadającą za wpisanie w wyświetlany znacznik informacji o przekształceniach afinicznych: translacji, rotacji i skalowaniu. Zdefiniuj w niej prywatne pole transform przechowujące łańcuch instrukcji transformacji.
+Wewnątrz tej klasy utwórz publiczną klasę Builder, którego zadaniem będzie budowanie tego łańcucha, a w niej prywatne pole transform - pusty napis.
+W klasie Builder zdefiniuj publiczne metody definiujące przekształcenia:
+Builder translate(Vec2 translation),
+Builder rotate(float angle, Vec2 center),
+Builder scale(Vec2 scaleFactor).
+W klasie Builder napisz metodę build, która przyjmie obiekt Shape i obuduje go dekoratorem TransformationDecorator.
+
+Laboratorium - Kontenery
+Zadanie 0.
+Utwórz projekt o nazwie genealogy w katalogu repozytorium.
+
+Zadanie 1.
+Zdefiniuj klasę Person posiadającą prywatne pola: imię, nazwisko jako napisy i datę urodzin jako LocalDate. W funkcji main() utwórz listę (List) obiektów Person.
+
+Zadanie 2.
+W klasie Person zdefiniuj prywatny zbiór (Set) children. Napisz metodę adopt(), która przyjmuje osobę (dziecko) przypisuje je do zbioru children swojego obiektu (rodzica). Metoda powinna zwrócić, czy dodanie się powiodło (boolean).
+
+Zadanie 3.
+W klasie Person zdefiniuj metodę getYoungestChild(), która zwraca referencję na najmłodsze dziecko swojego obiektu. Jeżeli osoba nie ma dzieci, metoda niech zwróci null.
+
+Zadanie 4.
+Zmodyfikuj klasę Person tak, aby implementowała interfejs Comparable. Osobą wcześniejszą powinna być urodzona wcześniej. Wykorzystaj powstałą funkcjonalność w metodzie getYoungestChild().
+
+Zadanie 5.
+W klasie Person zdefiniuj metodę getChildren(), która zwróci listę (List) obiektów children swojego obiektu, posortowaną od najstarszego do najmłodszego. 
+
+Zadanie 6.
+Zdefiniuj klasę Family wewnątrz której znajduje się mapa (Map<String, Person>). Kluczem mapy niech będzie napis w postaci imię+’ ’+nazwisko, a wartością, przedstawiająca się w ten sposób osoba. Załóż unikalność nazw osób. W klasie Family napisz metody:
+- add(), która przyjmie osobę i doda ją do rodziny,
+- get(), która przyjmie klucz i zwróci odpowiadający mu obiekt.
+
+Zadanie 7.
+Zmodyfikuj metodę add(), aby przyjmowała wariadyczną listę osób i wszystkie te osoby dodawała do rodziny.
+
+Zadanie 8.
+Zmodyfikuj mapę osób w klasie Family, aby dopuszczała istnienie wielu nazywających się tak samo osób. W tym celu zmień jej typ na Map<String, List<Person>>. Dostosuj metodę add() do dokonanych zmian. Zmodyfikuj metodę get(), aby zwracała tablicę osób pasujących do klucza, posortowaną od najstarszej do najmłodszej.
+
+
+Laboratorium - Pliki i wyjątki
+Skorzystaj z udostępnionego pliku zawierającego opisy przykładowych osób tworzących ze sobą związki.
+W kolejnych kolumnach pliku opisane są:
+1. imię i nazwisko,
+2. data narodzin,
+3. data śmierci (pusta jeśli żyje),
+4. imię rodzica (puste jeśli nieznany),
+5. imię rodzica (puste jeśli nieznany).
+
+Zadanie 1.
+Zmodyfikuj klasę Person, by uwzględnić datę śmierci. Na tym etapie pomiń tworzenie referencji między obiektami rodziców i dzieci.
+Napisz metodę wytwórczą fromCsvLine() klasy Person przyjmującą jako argument linię opisanego pliku.
+
+Zadanie 2.
+Napisz metodę fromCsv(), która przyjmie ścieżkę do pliku i zwróci listę obiektów typu Person.
+
+Zadanie 3.
+Napisz klasę NegativeLifespanException. Rzuć jej obiekt jako wyjątek, jeżeli data śmierci osoby jest wcześniejsza niż data urodzin. Wywołanie metody getMessage() powinno wyświetlić stosowną informację zawierającą przyczyny rzucenia wyjątku.
+
+Zadanie 4.
+Napisz klasę AmbiguousPersonException. Rzuć jej obiekt jako wyjątek, jeżeli w pliku pojawi się więcej niż jedna osoba o tym samym imieniu i nazwisku. Wywołanie metody getMessage() powinno wyświetlić stosowną informację zawierającą przyczyny rzucenia wyjątku.
+
+Zadanie 5.
+Zmodyfikuj metodę fromCsv(), by w obiektach rodziców ustawiała referencje do obiektów dzieci.
+
+Zadanie 6.
+Napisz klasę ParentingAgeException. Rzuć jej obiekt jako wyjątek, jeżeli rodzic jest młodszy niż 15 lat lub nie żyje w chwili narodzin dziecka. Przechwyć ten wyjątek tak, aby nie zablokował dodania takiej osoby, a jedynie poprosił użytkownika o potwierdzenie lub odrzucenie takiego przypadku za pomocą wpisania znaku “Y” ze standardowego wejścia.
+
+Zadanie 7.
+W klasie Person napisz statyczne metody toBinaryFile i fromBinaryFile, które zapiszą i odczytają listę osób do i z pliku binarnego.
+
+
+Laboratorium - Programowanie funkcyjne
+Zadanie 1.
+Pobierz aplikację PlantUML. Przetestuj jej działanie z linii komend.
+Napisz klasę PlantUMLRunner, posiadającą publiczne statyczne metody:
+- ustawienie ścieżki do uruchamialnego pliku jar.
+- wygenerowanie schematu po przekazaniu: napisu z danymi, ścieżki do katalogu wynikowego i nazwy pliku wynikowego.
+
+Zadanie 2.
+W klasie Person napisz bezargumentową metodę, która zwróci napis sformatowany według składni PlantUML. Napis, korzystając z diagramu obiektów, powinien przedstawiać obiekt osoby na rzecz której została wywołana metoda oraz jej rodziców (o ile są zdefiniowani). Obiekty powinny zawierać nazwę osoby. Od dziecka do rodziców należy poprowadzić strzałki.
+
+Zadanie 3.
+W klasie Person napisz statyczną metodę, która przyjmie listę osób. Lista powinna zwrócić podobny jak w poprzedni zadaniu napis. Tym razem powinien on zawierać wszystkie osoby w liście i ich powiązania.
+
+Zadanie 4.
+W klasie Person napisz statyczną metodę, która przyjmie listę osób oraz napis substring. Metoda powinna zwrócić listę osób z listy wejściowej, ograniczoną do osób, których nazwa zawiera substring.
+
+Zadanie 5.
+W klasie Person napisz statyczną metodę, która przyjmie listę osób. Metoda powinna zwrócić listę osób z listy wejściowej, posortowanych według roku urodzenia.
+
+Zadanie 6.
+W klasie Person napisz statyczną metodę, która przyjmie listę osób. Metoda powinna zwrócić listę zmarłych osób z listy wejściowej, posortowanych malejąco według długości życia.
+
+Zadanie 7.
+W klasie Person napisz statyczną metodę, która przyjmie listę osób. Metoda powinna zwrócić najstarszą żyjącą osobę.
+
+Zadanie 8.
+Zmodyfikuj metodę zadania 2. poprzez dodanie do jej argumentów obiektu Function<String, String> postProcess. Funkcja powinna przekształcić wszystkie linie odpowiadające obiektom za pomocą tej funkcji. Przetestuj metodę z dwiema funkcjami: funkcją zmieniającą kolor obiektu na żółty oraz funkcją nie wprowadzającą żadnych zmian.
+
+Zadanie 9.
+Zmodyfikuj metodę z poprzedniego zadania poprzez dodanie do jej argumentów obiektu Predicate<Person> condition. Metoda postProcess powinna wywołać się wyłącznie dla osób spełniających warunek condition. Przetestuj metodę z danymi wygenerowanymi w zadaniach 6. i 7.
+
+Laboratorium - Programowanie generyczne
+Zadanie 1.
+Napisz klasę szablonową CustomList implementującą strukturę listy jednokierunkowej ze wskaźnikami na początek i koniec. Zaprogramuj w niej metody:
+void addLast(T value) - dodającą wartość na koniec listy,
+T getLast() - zwracającą wartość z końca listy,
+void addFirst(T value) - dodającą wartość na początek listy,
+T getFirst() - zwracającą wartość z początku listy,
+T removeFirst() - zwracającą i usuwającą element z początku listy,
+T removeLast() - zwracającą i usuwającą element z końca listy.
+
+Zadanie 2.
+Niech klasa CustomList dziedziczy po klasie AbstractList. Wygeneruj potrzebne metody.  Nadpisz i zaprogramuj metody:
+
+boolean add(T t) - działającą tak samo jak addLast i zwracającą prawdę,
+int size() - zwracającą rozmiar listy,
+T get(int index) - zwracającą wartość w węźle o podanym indeksie.
+
+Zadanie 3.
+Nadpisz i zaprogramuj metody:
+Iterator<T> iterator() - zwracającą iterator do listy. Zdefiniuj w niej iterator,
+Stream<T> stream() - zwracającą strumień z zawartością listy.
+
+Zadanie 4.
+Napisz statyczną metodę szablonową, która przyjmie jako parametry Listę obiektów typu szablonowego T oraz obiekt Class. Metoda powinna zwrócić listę obiektów, które należą do wskazanej klasy.
+Następnie zmodyfikuj metodę tak, aby filtrowała obiekty, które dziedziczą (bezpośrednio lub pośrednio) po wskazanej klasie.
+
+Zadanie 5.
+Napisz predykat, który porówna, czy testowana zmienna znajduje się w otwartym przedziale, zdefiniowanym jego granicami.
+Korzystając z niego napisz metodę statyczną, która dla listy oraz granic zakresu danych typem szablonowym zwróci liczbę elementów w tej liście, spełniających warunek predykatu.
+
+Zadanie 6.
+Napisz komparator, który porówna dwie kolekcje pod względem liczby ich elementów. Następnie zmodyfikuj go tak, aby przyjmował wyłącznie kolekcje liczb i porównywał je pod względem ich sumy.
+
+
+Laboratorium - Powtórzenie do pierwszego kolokwium
+Dany jest plik CSV zawierający statystykę zgonów w Polsce w 2019 roku z podziałem na grupy wiekowe i przyczyny. Przyczyny są zapisane w pierwszej kolumnie z użyciem kodu ICD-10. Druga kolumna zawiera sumaryczną liczbę zgonów z podanej przyczyny, a kolejne kolumny - liczby zgonów w przedziałach wiekowych opisanych w nagłówku.
+
+Zadanie 1.
+Napisz klasę DeathCauseStatistic, posiadającą jako prywatne pola kod ICD-10 choroby oraz tablicę liczb zgonów w kolejnych grupach wiekowych.
+Napisz publiczną, statyczną metodę fromCsvLine zwracającą obiekt DeathCauseStatistic na podstawie pojedynczej linii pliku CSV. Uwzględnij, że w pliku po nazwie kodu znajduje się tabulator.
+Napisz akcesor do kodu ICD-10 przyczyny zgonu.
+
+Zadanie 2. 
+Wewnątrz klasy DeathCauseStatistic zdefiniuj publiczną klasę AgeBracketDeaths posiadającą publiczne, ostateczne pola typu int: young, old, deathCount zawierające granice grupy wiekowej i liczbę zgonów.
+W klasie DeathCauseStatistic napisz metodę przyjmującą wiek i zwracającą obiekt AgeBracketDeaths odpowiadający temu wiekowi.
+
+Zadanie 3.
+Napisz klasę DeathCauseStatisticList, wewnątrz której, w wybranej strukturze danych przetrzymywana będzie informacja o wszystkich obiektach DeathCauseStatistic. Napisz metodę repopulate, przyjmującą ścieżkę do pliku, która usuwa istniejące dane z tej struktury i zapełnia ją danymi z pliku CSV.
+
+W klasie DeathCauseStatisticsList napisz metodę mostDeadlyDiseases, która przyjmie wiek oraz liczbę n, mniejszą od liczby wymienionych chorób. Metoda powinna zwrócić n-elementową listę referencji na obiekty DeathCauseStatistic odpowiadające chorobom powodującym największą liczbę zgonów w grupie wiekowej do której przynależy podany wiek. Lista powinna być posortowana malejąco.
+Kody ICD-10 zawsze rozpoczynają się od pojedynczej litery oraz dwóch cyfr. Podczas sprawdzania poprawności kodu należy ograniczyć się do tego warunku.
+Dany jest plik tekstowy zawierający opis kodów listy chorób. Właściwe dane znajdują się w nim od linii 88. Większość linii ma postać:
+KOD OPIS
+np.
+J12.81 Pneumonia due to SARS-associated coronavirus
+jednak niektóre zawierają dodatkowe informacje lub są kontynuacją opisów nie mieszczących się w pojedynczej linii i powinny zostać pominięte.
+
+Zadanie 4.
+Napisz interfejs ICDCodeTabular posiadający jedną, publiczną metodę getDescription, która dla podanego kodu choroby zwróci jej opis, lub gdy takiego kodu nie odnajdzie rzuci wyjątek IndexOutOfBoundsException. Zaimplementuj ten interfejs w dwóch klasach ICDCodeTabularOptimizedForTime oraz ICDCodeTabularOptimizedForMemory.
+Klasa ICDCodeTabularOptimizedForTime powinna jednorazowo załadować wszystkie kody i opisy z pliku, a jej metoda getDescription powinna zwracać wartości z wybranej struktury danych w pamięci tymczasowej.
+Klasa ICDCodeTabularOptimizedForMemory nie powinna przetrzymywać danych w pamięci operacyjnej, ale za każdym wywołaniem metody getDescription powinna otwierać plik i wyszukiwać w nim opisu.
+
+Laboratorium - Pakiety
+Zadanie 1.
+Utwórz mavenowy projekt o nazwie site zawierający dwa pakiety: database oraz auth. W pakiecie database stwórz klasę DatabaseConnection, posiadającą prywatne pole java.sql.Connection oraz publiczny akcesor do niego. Klasa powinna posiadać także metody publiczne:
+- connect, która przyjmie ścieżkę do pliku z bazą w formacie SQLite i połączy się z nią,
+- disconnect, która rozłączy się z bazą.
+Poza pakietami napisz klasę Main, w której przetestowane zostanie utworzenie, zapis i odczyt danych z tabeli.
+
+Zadanie 2.
+W pakiecie auth utwórz rekord Account zawierający id i nazwę użytkownika. Stwórz także klasę AccountManager posiadającą metody publiczne:
+- register, dodającą nowego użytkownika do bazy danych,
+- authenticate, zwracająca wartość logiczną mówiącą, czy nazwa użytkownika i hasło zgadzają się,
+- getAccount, zwracającą obiekt Account dla zadanej nazwy użytkownika lub id.
+Hasło w bazie należy zaszyfrować z użyciem biblioteki bcrypt. W klasie Main przetestuj napisane metody.
+
+Zadanie 3.
+Z projektu site usuń klasę Main, ale zachowaj jej zawartość w bezpiecznym miejscu. Skonfiguruj w swoim koncie na Githubie rejestr pakietów Mavena. Umieść w nim napisaną bibliotekę site. Utwórz mavenowy projekt o nazwie shop zawierający pakiet music. Zaimportuj w nim bibliotekę site. Umieść w nim plik z usuniętą wcześniej klasą Main i dostosuj jej kod, aby możliwe było uruchomienie metody main.
+
+Laboratorium - Testy
+Zadanie 0.
+Zapoznaj się ze zmianami wprowadzonymi do poprzednio napisanego projektu:
+DatabaseConnection przechowuje połączenia w mapie,
+AccountManager został przeniesiony do klasy Account.Persistence
+Metoda Account.Persistence.register() zwraca id dodanego konta.
+Wszystkie zadania należy wykonywać w pakiecie music.
+
+Zadanie 1a.
+Utwórz rekord Song składający się z napisów: artysty i tytułu oraz czasu trwania wyrażonego w sekundach. Utwórz klasę Playlist dziedziczącą po ArrayList<Song>. 
+Zadanie 1b.
+Napisz test sprawdzający, czy nowo utworzona playlista jest pusta.
+Zadanie 1c.
+Napisz test sprawdzający, czy po dodaniu jednego utworu playlista ma rozmiar 1.
+Zadanie 1d.
+Napisz test sprawdzający, czy po dodaniu jednego utworu, jest w nim ten sam utwór.
+Zadanie 1e.
+Napisz test sprawdzający, czy po dodaniu jednego utworu, jest w nim taki sam utwór.
+Zadanie 1f.
+W klasie Playlist napisz metodę atSecond, która przyjmie całkowitą liczbę sekund i zwróci obiekt Song, który jest odtwarzany po tylu sekundach odtwarzania playlisty. Napisz test sprawdzający działanie tej metody.
+Zadanie 1g.
+Zmodyfikuj metodę atSecond tak, aby rzucała wyjątek IndexOutOfBoundsException, jeżeli zadany czas jest późniejszy niż czas odtwarzania playlisty. Napisz test sprawdzający rzucanie tego wyjątku.
+Zadanie 1h.
+Zmodyfikuj metodę atSecond, aby rozróżniała podanie ujemnego czasu i czasu wykraczającego poza czas trwania listy i zapisywała w argumencie message konstruktora IndexOutOfBoundsException odpowiedni napis. Napisz dwa testy sprawdzające każdy z wymienionych przypadków.
+
+Zadanie 2a.
+Zapoznaj się z bazą danych songs.db oraz plikiem songs.csv zawierającymi te same dane. W rekordzie Song stwórz publiczną, statyczną klasę Persistence. W tej klasie powinna znaleźć się metoda read, która przyjmuje indeks, a zwraca obiekt Optional<Song>, zapełniony lub nie, w zależności od poprawności indeksu w bazie.
+
+Zadanie 2b.
+Napisz test sprawdzający odczyt z bazy danych piosenki o poprawnym indeksie.
+Zadanie 2c.
+Napisz test sprawdzający próbę odczytu piosenki i niepoprawnym indeksie. Wydziel łączenie i rozłączanie się z bazą do oddzielnych metod i nadaj im odpowiednie adnotacje.
+Zadanie 2d.
+Napisz test sparametryzowany metodą zwracającą strumień indeksów i oczekiwanych piosenek.
+Zadanie 2e.
+Napisz test sparametryzowany plikiem songs.csv.
+
+Zadanie 3a.
+Zapoznaj się z klasą ListenerAccount. Klasa rozszerza klasę Account o liczbę kredytów oraz listę piosenek posiadaną na koncie. Obie dane znajdują się wyłącznie w bazie danych. Napisz test sprawdzający poprawność rejestracji nowego konta.
+Zadanie 3b.
+Napisz test sprawdzający poprawne logowanie się do konta.
+Zadanie 3c.
+Zaimplementuj metody dodawania i odczytu kredytów. Napisz test sprawdzające początkowy, pusty stan konta, oraz test dodawania kredytów.
+Zadanie 3d.
+Utwórz wyjątek NotEnoughCreditsException. Napisz metodę buySong przyjmującą id piosenki i następnie:
+- jeżeli na koncie jest piosenka, nie robi nic,
+- jeżeli na koncie nie ma dodanej piosenki dodaje ją i zabiera jeden kredyt,
+- jeżeli na koncie nie ma piosenki, ale nie ma także kredytów, rzuca NotEnoughtCreditsException.
+Napisz testy sprawdzające wszystkie wymienione przypadki.
+Zadanie 3e.
+Napisz metodę createPlaylist, która przyjmie listę id piosenek i zwróci obiekt Playlist zawierający te piosenki. Jeżeli piosenki nie znajdują się na koncie, na rzecz którego jest tworzona playlista, należy postąpić jak w poprzednim kroku. Napisz test porównujący tak utworzoną playlistę z ręcznie predefiniowaną.
+
+
+
+Laboratorium - Wielowątkowość
+Zadanie 1.
+Napisz klasę posiadającą:
+- metodę, która otrzyma ścieżkę i wczyta obraz do pola klasy typu BufferedImage,
+- metodę, która zapisze obraz z tego pola do podanej ścieżki.
+
+Zadanie 2.
+Dodaj metodę, która zwiększy jasność obrazu o podaną stałą.
+
+Zadanie 3.
+Dodaj metodę, która wykona to samo działanie, dzieląc zadanie na określoną liczbę wątków. Liczbę wątków należy powiązać z liczbą dostępnych rdzeni procesora. Porównaj czas wykonania obu metod.
+
+Zadanie 4.
+Dodaje metodę, która wykona to samo działanie w oparciu o pulę wątków. Jeden wątek powinien obsłużyć jeden wiersz obrazu. Dodaj czas wykonania tej metody do porównania.
+
+Zadanie 5.
+Napisz metodę, która w oparciu o pulę wątków obliczy histogram wybranego kanału obrazu.
+
+Zadanie 6.
+Napisz metodę, która przyjmie histogram obrazu i wygeneruje obraz przedstawiający wykres tego histogramu.
+
+Laboratorium - Połączenia sieciowe
+Zadanie 1.
+Napisz serwer czatu sieciowego. Serwer powinien pozwolić dołączyć dowolnej liczbie użytkowników. Serwer powinien oczekiwać na wiadomość od dowolnego użytkownika i rozsyłać tę wiadomość wszystkim użytkownikom.
+
+Zadanie 2.
+Napisz klienta czatu sieciowego współpracującego z napisanym serwerem. Klient powinien odczytywać standardowe wejście i przesyłać je do serwera oraz odbierać wiadomości z serwera i wyświetlać je na standardowym wyjściu.
+
+Zadanie 3a.
+Niech działanie klienta rozpoczyna się zawsze od wpisania loginu. Login powinien zostać przesłany serwerowi w postaci sformatowanej wiadomości. Zakładamy, że użytkownicy podadzą unikalne loginy. W chwili zalogowania pozostali użytkownicy czata powinni otrzymać informację o dołączeniu użytkownika, a chwili wyłączenia klienta o opuszczeniu przez niego czatu.
+
+Zadanie 3b.
+Jeżeli użytkownik wpisze “/online”, powinien otrzymać listę aktualnie zalogowanych użytkowników.
+
+Zadanie 4a.
+Niech wszystkie wiadomości użytkowników w czacie rozpoczynają się od ich loginów.
+
+Zadanie 4b.
+Jeżeli użytkownik napisze w czacie “/w recipient message”, gdzie recipient jest loginem odbiorcy, a message wysłaną wiadomością, należy przesłać tą wiadomość wyłącznie wybranemu odbiorcy. Jeżeli nie jest on zalogowany, należy wyświetlić nadawcy stosowną informację.
+
+
+
+Laboratorium - Graficzny interfejs użytkownika
+Zadanie 1.
+Zaprojektuj okno czatu w którym będzie znajdowały obiekty klas:
+JTextArea - wieloliniowe pole tekstowe z zapisem czatu,
+JTextField - pole tekstowe do wprowadzania nowej wiadomości,
+JList - lista aktywnych uczestników czatu,
+JButton - do wysyłania wiadomości.
+Zaprogramuj przycisk do wysyłania wiadomości tak, aby jego naciśnięcie powodowało dopisanie wiadomości z obiektu klasy JTextField do JTextArea i wyczyszczenie zawartości obiektu klasy JTextField. Analogicznie powinno działać naciśnięcie entera w polu wiadomości.
+
+Zadanie 2.
+Zaprogramuj logowanie użytkownika do czatu, korzystając z wcześniej napisanej metody logowania klienta.
+
+Zadanie 3.
+Stwórz klasę o nazwie ClientReceiver. Zdefiniuj w niej funkcje odpowiadające wszystkim dotychczas obsługiwanym działaniom (broadcast, whisper, login broadcast, logout broadcast, online). W wątku obsługującym połączenie z serwerem, póki co, obsłuż broadcast. Wiadomość rozróżnij na podstawie prefiksu.
+
+Zadanie 4.
+Obsłuż wyświetlanie listy użytkowników. Podczas logowania klient powinien poprosić serwer o wysłanie mu aktualnej listy. Login i logout broadcast powinny dodawać i usuwać użytkownika z listy.
+
+
+
+Laboratorium- Gra
+Zadanie:
+Napisz grę zbliżoną do Breakout.
+Krok 1.
+Utwórz obiekt GameCanvas dziedziczący po javafx.scene.canvas.Canvas. W klasie tej znajdzie się logika i wyświetlanie pisanej gry.
+W klasie GameCanvas utwórz prywatny obiekt klasy javafx.scene.canvas.GraphicsContext.
+Napisz publiczną metodę draw(), w której będzie on wypełniał całą powierzchnię kanwy kolorem czarnym. Usuń wygenerowany plik FXML i powiązaną z nim klasę kontrolera. Zaprogramuj aplikację tak, aby wyświetlała obiekt GameCanvas.
+
+Krok 2.
+Zdefiniuj abstrakcyjną klasę GraphicsItem posiadającą chronione, statyczne pola canvasWidth, canvasHeight, oraz publiczny setter do nich. Pola te posłużą do przeliczania rzeczywistego rozmiaru kanwy na przedział 0 - 1. W klasie powinny znaleźć się także chronione, zmiennoprzecinkowe pola x, y, width i height oraz publiczne akcesory do nich.
+Klasa powinna posiadać czysto wirtualną metodę draw(), przyjmującą GraphicsContext jako argument.
+Napisz klasę Paddle, która dziedziczy po GraphicsItem i reprezentuje platformę, od której odbija się piłka. Utwórz w niej bezargumentowy konstruktor, który ustawi pozycję platformy w dolnej części ekranu. Zaimplementuj metodę draw tak, aby rysowała prostokąt wybranego koloru w pozycji odpowiadającej położeniu platformy.
+W klasie GameCanvas przechwyć zdarzenie przesunięcia myszy. W klasie Paddle napisz metodę, która przyjmie x-ową składową zdarzenia i ustawi platformę tak, aby jej środek znajdował się pozycji tej składowej.
+
+Krok 3.
+Napisz klasę Ball, która dziedziczy po GraphicsItem i reprezentuje piłkę. Napisz w niej publiczną metodę setPosition(), która przyjmie obiekt javafx.geometry.Point2D i ustawi tam środek piłki.
+W klasie prywatny obiekt Point2D moveVector, który będzie określał znormalizowany wektor ruchu. Ustaw go tak, aby piłka początkowo kierowała się pod kątem 45 stopni w prawo. Utwórz także prywatne pole double velocity określające z jaką szybkością będzie odbywał się ruch.
+Napisz publiczną metodę updatePosition(), która na podstawie danych obliczy położenie piłki w następnym kroku.
+Zaimplementuj metodę draw() tak, aby rysowała białe koło.
+W klasie GameCanvas stwórz zmienną logiczną odpowiadającą za informowanie o trwaniu gry. Póki gra nie jest rozpoczęta, pozycja piłki powinna być powiązana z platformą i ustawiana przez setPosition(), a po jej rozpoczęciu przez updatePosition(). Grę powinien rozpoczynać przycisk myszy.
+
+Krok 4.
+W klasie GameCanvas utwórz obiekt AnimationTimer. Do jego metody handle() przenieś rysowanie zawartości kanwy. Zmodyfikuj metodę Ball.updatePosition tak, aby przyjmowała liczbę sekund, które minęły od ostatniej klatki.
+
+Krok 5.
+W klasie GameCanvas napisz metody prywatne shouldBallBounceHorizontally(), shouldBallBounceVertically() oraz shouldBallBounceFromPaddle(), wszystkie zwracające wartość logiczną, a sprawdzające warunek opisany swoim identyfikatorem.
+
+W klasie Ball napisz metody publiczne  bounceHorizontally() i bounceVertically() modyfikujące wektor ruchu. Wywołaj te metody, jeżeli zostaną spełnione warunki. Odbicie od platformy potraktuj jako poziome.
+
+Krok 6.
+Napisz klasę Brick, która dziedziczy po GraphicsItem i reprezentuje jedną z cegieł. W klasie tej utwórz statyczne, prywatne pola gridRows i gridCols. Wyobrażona siatka ma podzielić cały dostępny ekran na równe prostokąty. Cegła będzie mogła znaleźć się w pojedynczej pozycji siatki. Napisz metodę ustawiającą te pola.
+Napisz konstruktor, w którym przekazane zostaną całkowite pozycje x i y na siatce oraz kolor. Zaimplementuj metodę draw, tak aby rysunek symbolizował trójwymiarowość cegły.
+W klasie GameCanvas stwórz listę obiektów Brick oraz metodę loadLevel, która ustawi siatkę na 20 wierszy i 10 kolumn, a wiersze od 2 do 7 zapełni cegłami, każdy wiersz w innym kolorze.
+
+Krok 7.
+W klasie Ball napisz publiczne metody zwracające jej skrajne punkty: górny, dolny, lewy i prawy.
+W klasie Brick zdefiniuj publiczny typ wyliczeniowy CrushType {NoCrush, HorizontalCrush, VerticalCrush}. Napisz metodę, która przyjmie cztery punkty zwrócone przez Ball i na ich podstawie stwierdzi, czy powinna ona rozbić cegłę, a jeżeli tak, to w jaki sposób. Powiąż odpowiedź z tej funkcji z odpowiednim sposobem odbicia piłki.
+
+Krok 8.
+W klasie Ball napisz metodę bounceFromPaddle, która przyjmie zmiennoprzecinkowy parametr. Parametr ten powinien być proporcjonalny do odległości pozycji uderzenia piłki od środka platformy i powinien posłużyć do obliczenia zmodyfikowanego wektora ruchu tak, aby uderzenie bliżej końców powodowało ruch pod większym kątem.
+
+
+
+Laboratorium - Powtórzenie do drugiego kolokwium
+Zadanie 1.
+Zaznajom się z dołączonym plikiem app-view.fxml. Zaprogramuj funkcjonalność rysowania kół wewnątrz stworzonej kanwy. Koła powinny być tworzone po kliknięciu myszą w obszarze kanwy. Środek koła powinien być w miejscu kliknięcia. Kolor wypełnienia i promień należy ustawić na podstawie odczytów ze stosownych kontrolek na interfejsie.
+
+Zadanie 2.
+W głównym pakiecie aplikacji stwórz dwa podpakiety: server i client, w których umieszczone zostaną klasy odpowiadające zadanym funkcjonalnościom. W pakiecie server zdefiniuj klasę Server, w której istnieć będzie ServerSocket, do którego będą mogli się łączyć klienci, reprezentowani w serwerze klasą ClientThread. W klasie Server stwórz publiczną metodę broadcast(), która prześle otrzymaną wiadomość wszystkim klientom. ClientThread powienien po każdym otrzymaniu wiadomości przesyłać ją dalej za pomocą metody broadcast serwera.
+W pakiecie client zdefiniuj klasę ServerThread, przyjmuje metodę send(), przyjmującą parametry potrzebne do stworzenia okręgu i wysyła je serwerowi.
+
+Zadanie 3.
+Zdefiniuj rekord Dot składający się ze współrzędnych środka koła, koloru i promienia. Zaimplementuj w nim statyczną metodę toMessage, przyjmującą wszystkie wymienione parametry i zwracającą sformatowany String, który może być wysłany sieciowo. Napisz statyczną metodę fromMessage, która przyjmie taki String i odczyta z niego i zwróci obiekt klasy Dot.
+
+Zadanie 4.
+Dodaj obiekty klas Server i ServerThread do kontrolera okna za pomocą parametrów konstruktora. Zastąp wyświetlenie okręgu wywołaniem metody send() obiektu klasy ServerThread. Wewnątrz ServerThread stwórz pole konsumenta zmiennej typu Dot i mutator do tego pola. Konsument powinien być wywoływany dla danych każdego okręgu, które dotrą do klienta. Niech konstruktor kontrolera ustawia konsumenta w taki sposób, by realizował te same zadania, co dotychczasowa metoda rysująca okręgi.
+
+Zadanie 5.
+Zdefiniuj połączenie z bazą danych i utwórz w niej następującą tabelę:
+CREATE TABLE dot(
+id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+x INTEGER NOT NULL,
+y INTEGER NOT NULL,
+color TEXT NOT NULL,
+radius INTEGER NOT NULL
+);
+Niech serwer, w momencie wystartowania łączy się z tą bazą. Wewnątrz serwera zdefiniuj metodę saveDot(), przyjmującą obiekt Dot, która zapisuje jego zawartość w bazie.
+Napisz metodę getSavedDots(), która zwraca wszystkie zapisane koła w postaci listy Dot. Niech metoda broadcast() zapisuje koło do bazy. Chwilę po dołączeniu nowego klienta, należy mu przesłać wszystkie wygenerowane okręgi. Utwórz pomocniczą, niestatyczną metodę klasy Dot, generującą wiadomość na postawie parametrów koła zawartych w obiekcie.
+
+
+
+
+
+
+

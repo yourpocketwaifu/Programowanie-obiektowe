@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notatka K1 — Java OOP 🦋</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --purple-bg:    #F5F0FF;
+    --purple-soft:  #E8D6FF;
+    --purple-mid:   #C9A0F0;
+    --purple-vivid: #9B59D0;
+    --purple-deep:  #6B21A8;
+    --purple-dark:  #3B0764;
+    --code-bg:    #120B1E;
+    --code-fg:    #F8F8F2;
+    --keyword:    #C084FC;
+    --string:     #A3E635;
+    --comment:    #6272A4;
+    --type:       #67E8F9;
+    --number:     #FB923C;
+    --method:     #86EFAC;
+    --card-bg:    #FFFFFF;
+    --text:       #2E1A47;
+    --text-light: #6B4F8A;
+    --border:     #DEC0F8;
+    --shadow:     rgba(107, 33, 168, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--purple-bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #9B59D0 0%, #6B21A8 40%, #3B0764 100%);
+    color: white;
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(196,168,255,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.12) 0%, transparent 50%);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+  .hero-cat { font-size: 64px; margin-bottom: 12px; display: block; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .hero h1 {
+    font-size: 2.6rem; font-weight: 800;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 1.1rem; margin-top: 12px;
+    opacity: 0.9; font-weight: 600;
+  }
+  .hero-tags { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .tag {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 0.3px;
+  }
+
+  /* ── LINK DO K2 ── */
+  .companion-banner {
+    background: linear-gradient(135deg, #3B0764, #6B21A8);
+    color: white;
+    text-align: center;
+    padding: 14px 24px;
+    font-size: 0.92rem; font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .companion-banner a {
+    color: #E9D5FF;
+    text-decoration: underline;
+    margin-left: 6px;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; max-width: 1100px; margin: 0 auto; gap: 28px; padding: 36px 24px; }
+
+  /* ── NAV ── */
+  .nav { width: 220px; flex-shrink: 0; }
+  .nav-sticky {
+    position: sticky; top: 24px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: white;
+    border-radius: 18px;
+    padding: 20px 16px;
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1.5px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple-mid) transparent;
+  }
+  .nav-sticky::-webkit-scrollbar { width: 6px; }
+  .nav-sticky::-webkit-scrollbar-thumb {
+    background: var(--purple-mid); border-radius: 10px;
+  }
+  .nav-sticky::-webkit-scrollbar-track { background: transparent; }
+  .nav-title {
+    font-size: 0.75rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--purple-deep); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav a {
+    display: block; padding: 7px 10px; border-radius: 10px;
+    color: var(--text-light); text-decoration: none;
+    font-size: 0.85rem; font-weight: 600;
+    transition: all 0.2s; margin-bottom: 2px;
+  }
+  .nav a:hover, .nav a.active {
+    background: var(--purple-soft);
+    color: var(--purple-deep);
+    padding-left: 14px;
+  }
+  .nav-num {
+    display: inline-block; width: 20px; height: 20px;
+    background: var(--purple-soft); color: var(--purple-deep);
+    border-radius: 50%; font-size: 0.7rem; font-weight: 800;
+    text-align: center; line-height: 20px; margin-right: 6px;
+  }
+
+  /* ── CONTENT ── */
+  .content { flex: 1; min-width: 0; }
+
+  /* ── SECTION CARD ── */
+  .section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1.5px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: linear-gradient(180deg, var(--purple-vivid), var(--purple-deep));
+    border-radius: 20px 0 0 20px;
+  }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 2px dashed var(--purple-mid);
+  }
+  .section-num {
+    width: 42px; height: 42px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--purple-vivid), var(--purple-deep));
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 800;
+    box-shadow: 0 3px 10px rgba(107,33,168,0.35);
+  }
+  .section-title { font-size: 1.4rem; font-weight: 800; color: var(--purple-dark); }
+  .section-sub { font-size: 0.85rem; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+
+  /* ── TEXT ── */
+  p { margin-bottom: 14px; font-size: 0.98rem; }
+  h3 { color: var(--purple-deep); font-size: 1.05rem; margin: 22px 0 8px; font-weight: 800; }
+  h3::before { content: '✦ '; font-size: 0.9rem; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: 14px; padding: 14px 18px; margin: 16px 0;
+    font-size: 0.92rem; font-weight: 600; display: flex; gap: 12px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .callout.tip  { background: #F5F0FF; border: 1.5px solid var(--purple-mid); color: var(--purple-dark); }
+  .callout.warn { background: #FFF8E1; border: 1.5px solid #FFD54F; color: #6D4C00; }
+  .callout.info { background: #E8F4FD; border: 1.5px solid #90CAF9; color: #0D47A1; }
+  .callout.good { background: #E8F5E9; border: 1.5px solid #A5D6A7; color: #1B5E20; }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: var(--code-bg);
+    border-radius: 14px;
+    margin: 16px 0;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(18,11,30,0.4);
+    border: 1px solid rgba(192,132,252,0.2);
+  }
+  .code-header {
+    background: rgba(255,255,255,0.07);
+    padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .code-lang {
+    font-size: 0.75rem; font-weight: 700; color: var(--purple-vivid);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dots span:nth-child(1){background:#FF5F57}
+  .code-dots span:nth-child(2){background:#FFBD2E}
+  .code-dots span:nth-child(3){background:#28C840}
+
+  pre {
+    padding: 20px 22px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--code-fg);
+  }
+  pre .kw   { color: var(--keyword); font-weight: 600; }
+  pre .str  { color: var(--string); }
+  pre .cmt  { color: var(--comment); font-style: italic; }
+  pre .typ  { color: var(--type); }
+  pre .num  { color: var(--number); }
+  pre .met  { color: var(--method); }
+  pre .cls  { color: #FCA5A5; font-weight: 600; }
+  pre .ann  { color: #FCD34D; }
+
+  /* ── GRID 2 COL ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media(max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* ── MINI CARD ── */
+  .mini-card {
+    background: var(--purple-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+  }
+  .mini-card-title {
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--purple-deep); margin-bottom: 8px;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th {
+    background: linear-gradient(135deg, var(--purple-vivid), var(--purple-deep));
+    color: white; padding: 10px 14px; text-align: left;
+    font-weight: 800; font-size: 0.82rem; letter-spacing: 0.3px;
+  }
+  th:first-child { border-radius: 12px 0 0 0; }
+  th:last-child  { border-radius: 0 12px 0 0; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--purple-bg); }
+  td code { background: var(--purple-soft); color: var(--purple-dark); padding: 2px 7px; border-radius: 5px; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* ── INLINE CODE ── */
+  :not(pre) > code {
+    background: var(--purple-soft);
+    color: var(--purple-dark);
+    padding: 2px 7px; border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em; font-weight: 600;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 6px 0 6px 28px;
+    position: relative; font-size: 0.93rem;
+    border-bottom: 1px dashed var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '✦';
+    position: absolute; left: 0; color: var(--purple-vivid); font-size: 0.9rem;
+  }
+  .checklist li strong { color: var(--purple-dark); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 800; margin-left: 8px;
+    vertical-align: middle; letter-spacing: 0.3px;
+  }
+  .badge.crit { background: #EDE9FF; color: #3B0764; }
+  .badge.imp  { background: #FFF3CD; color: #664D03; }
+  .badge.nice { background: #D1E7DD; color: #0A3622; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 40px 24px;
+    color: var(--text-light); font-size: 0.88rem; font-weight: 600;
+  }
+  footer .heart { color: var(--purple-vivid); font-size: 1.1rem; }
+
+  /* responsive */
+  @media(max-width:768px){
+    .layout{flex-direction:column}
+    .nav{width:100%}
+    .nav-sticky{position:static}
+    .hero h1{font-size:1.8rem}
+    .section{padding:22px 18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="hero-cat">🦋</span>
+    <h1>Notatka do Kolokwium 1<br>Java — OOP od podstaw</h1>
+    <p>Klasy · Dziedziczenie · Interfejsy · Kolekcje · Wzorce</p>
+    <div class="hero-tags">
+      <span class="tag">Klasy & Obiekty</span>
+      <span class="tag">Dziedziczenie</span>
+      <span class="tag">Interfejsy</span>
+      <span class="tag">Kolekcje</span>
+      <span class="tag">Generyki</span>
+      <span class="tag">Stream API</span>
+      <span class="tag">Wzorce</span>
+      <span class="tag">Wyjątki</span>
+    </div>
+  </div>
+</header>
+
+<div class="companion-banner">
+  🔗 Ta notatka to <strong>Część 1 (K1)</strong> — podstawy OOP &amp; Java.
+  <a href="Notatka_K2_Java_ze_Swing.html">➜ Część 2 (K2): Serwery TCP · SQLite · JavaFX · Swing · JUnit</a>
+</div>
+
+<div class="layout">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-sticky">
+      <div class="nav-title">🦋 Spis treści</div>
+      <a href="#s0"><span class="nav-num">0</span>Typy & składnia</a>
+      <a href="#s1"><span class="nav-num">1</span>Klasy i pola</a>
+      <a href="#s2"><span class="nav-num">2</span>Konstruktory</a>
+      <a href="#s3"><span class="nav-num">3</span>Akcesory</a>
+      <a href="#s4"><span class="nav-num">4</span>Modyfikatory</a>
+      <a href="#s5"><span class="nav-num">5</span>Dziedziczenie</a>
+      <a href="#s6"><span class="nav-num">6</span>Klasy abstrakcyjne</a>
+      <a href="#s7"><span class="nav-num">7</span>Interfejsy</a>
+      <a href="#s8"><span class="nav-num">8</span>Polimorfizm</a>
+      <a href="#s9"><span class="nav-num">9</span>Kolekcje</a>
+      <a href="#s10"><span class="nav-num">10</span>Comparable</a>
+      <a href="#s11"><span class="nav-num">11</span>Wyjątki</a>
+      <a href="#s12"><span class="nav-num">12</span>String API</a>
+      <a href="#s13"><span class="nav-num">13</span>equals & toString</a>
+      <a href="#s14"><span class="nav-num">14</span>Optional</a>
+      <a href="#s15"><span class="nav-num">15</span>Dekorator</a>
+      <a href="#s16"><span class="nav-num">16</span>Builder</a>
+      <a href="#s17"><span class="nav-num">17</span>Observer</a>
+      <a href="#s18"><span class="nav-num">18</span>Generyki</a>
+      <a href="#s19"><span class="nav-num">19</span>Stream & Lambda</a>
+      <a href="#s20"><span class="nav-num">20</span>Pliki</a>
+      <a href="#s21"><span class="nav-num">21</span>Rekordy</a>
+      <a href="#s22"><span class="nav-num">✦</span>Co powtórzyć</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 0: Typy danych i składnia podstawowa -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s0">
+      <div class="section-header">
+        <div class="section-num">0</div>
+        <div>
+          <div class="section-title">Typy danych i składnia podstawowa 🧱</div>
+          <div class="section-sub">Zanim zaczniesz pisać klasy — fundament</div>
+        </div>
+      </div>
+
+      <h3>Typy prymitywne vs obiektowe</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Prymitywny</th><th>Obiektowy (wrapper)</th><th>Rozmiar</th><th>Przykład</th></tr></thead>
+          <tbody>
+            <tr><td><code>int</code></td><td><code>Integer</code></td><td>32 bit</td><td><code>int x = 5;</code></td></tr>
+            <tr><td><code>long</code></td><td><code>Long</code></td><td>64 bit</td><td><code>long big = 9_000_000_000L;</code></td></tr>
+            <tr><td><code>double</code></td><td><code>Double</code></td><td>64 bit</td><td><code>double pi = 3.14;</code></td></tr>
+            <tr><td><code>boolean</code></td><td><code>Boolean</code></td><td>1 bit</td><td><code>boolean ok = true;</code></td></tr>
+            <tr><td><code>char</code></td><td><code>Character</code></td><td>16 bit</td><td><code>char c = 'A';</code></td></tr>
+            <tr><td>—</td><td><code>String</code></td><td>zmienny</td><td><code>String s = "tekst";</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">📖</span>
+        <div>Typów obiektowych (wrapperów) używasz gdy potrzebujesz <code>null</code>, kolekcji (<code>List&lt;Integer&gt;</code> nie <code>List&lt;int&gt;</code>), albo metod jak <code>Integer.parseInt()</code>. Na co dzień — typy prymitywne są szybsze.</div>
+      </div>
+
+      <h3>Pętle</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — rodzaje pętli</span>
+        </div>
+        <pre><span class="cmt">// for — gdy znasz liczbę iteracji</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">10</span>; i++) {
+    System.out.<span class="met">println</span>(i);
+}
+
+<span class="cmt">// for-each — iteracja po kolekcji lub tablicy</span>
+<span class="kw">for</span> (<span class="typ">String</span> item : list) {
+    System.out.<span class="met">println</span>(item);
+}
+
+<span class="cmt">// while — gdy nie wiesz kiedy skończysz</span>
+<span class="kw">while</span> (warunek) {
+    <span class="cmt">// wykonuj dopóki warunek true</span>
+}
+
+<span class="cmt">// do-while — wykonaj przynajmniej raz</span>
+<span class="kw">do</span> {
+    <span class="cmt">// wykonaj</span>
+} <span class="kw">while</span> (warunek);</pre>
+      </div>
+
+      <h3>Tablice</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — tablice</span>
+        </div>
+        <pre><span class="cmt">// Tworzenie</span>
+<span class="kw">int</span>[] liczby = <span class="kw">new int</span>[<span class="num">5</span>];          <span class="cmt">// tablica 5 intów (domyślnie 0)</span>
+<span class="typ">String</span>[] imiona = {<span class="str">"Ada"</span>, <span class="str">"Ola"</span>};  <span class="cmt">// inicjalizacja od razu</span>
+
+<span class="cmt">// Dostęp (indeks od 0!)</span>
+liczby[<span class="num">0</span>] = <span class="num">42</span>;
+System.out.<span class="met">println</span>(liczby[<span class="num">0</span>]);
+
+<span class="cmt">// Długość</span>
+liczby.length  <span class="cmt">// NIE length() — tablica to nie obiekt z metodami</span>
+
+<span class="cmt">// Kopiowanie tablicy</span>
+<span class="kw">int</span>[] kopia = <span class="typ">Arrays</span>.<span class="met">copyOf</span>(liczby, liczby.length);
+<span class="typ">Arrays</span>.<span class="met">sort</span>(liczby);   <span class="cmt">// sortowanie w miejscu</span></pre>
+      </div>
+
+      <h3>Instrukcja switch (nowy styl Java 14+)</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — switch expression</span>
+        </div>
+        <pre><span class="kw">String</span> dzien = <span class="str">"MON"</span>;
+<span class="kw">String</span> typ = <span class="kw">switch</span> (dzien) {
+    <span class="kw">case</span> <span class="str">"MON"</span>, <span class="str">"TUE"</span>, <span class="str">"WED"</span>, <span class="str">"THU"</span>, <span class="str">"FRI"</span> -> <span class="str">"Dzień roboczy"</span>;
+    <span class="kw">case</span> <span class="str">"SAT"</span>, <span class="str">"SUN"</span>                          -> <span class="str">"Weekend"</span>;
+    <span class="kw">default</span>                                      -> <span class="str">"Nieznany"</span>;
+};</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 1: Klasy i pola -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div>
+          <div class="section-title">Klasy i pola 📦</div>
+          <div class="section-sub">Klasa to szablon — obiekt to konkretny egzemplarz</div>
+        </div>
+      </div>
+
+      <p>Klasa opisuje <strong>co obiekt posiada</strong> (pola) i <strong>co potrafi</strong> (metody). Obiekt to instancja klasy — tworzysz go przez <code>new</code>.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — podstawowa klasa</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Point</span> {
+    <span class="cmt">// pola prywatne — nie widoczne z zewnątrz klasy</span>
+    <span class="kw">private double</span> x;
+    <span class="kw">private double</span> y;
+
+    <span class="cmt">// pole finalne — wartość ustalona raz na zawsze</span>
+    <span class="kw">public final</span> <span class="typ">String</span> label = <span class="str">"punkt"</span>;
+
+    <span class="cmt">// pole statyczne — jedno dla WSZYSTKICH obiektów klasy</span>
+    <span class="kw">private static int</span> count = <span class="num">0</span>;
+
+    <span class="cmt">// metoda statyczna — wywołujesz przez Point.getCount(), nie przez obiekt</span>
+    <span class="kw">public static int</span> <span class="met">getCount</span>() { <span class="kw">return</span> count; }
+}</pre>
+      </div>
+
+      <div class="grid2">
+        <div class="mini-card">
+          <div class="mini-card-title">🔒 Kiedy private?</div>
+          Prawie zawsze. Pola chronisz przez gettery/settery — to hermetyzacja.
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">📌 Kiedy static?</div>
+          Gdy dane dotyczą całej klasy, nie jednego obiektu (np. licznik instancji, stała <code>PI</code>).
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">🔑 Kiedy final?</div>
+          Gdy wartość nie powinna się zmieniać po ustawieniu — stałe, wartości konfiguracyjne.
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">🆕 Tworzenie obiektu</div>
+          <code>Point p = new Point(1.0, 2.0);</code> — <code>new</code> wywołuje konstruktor i zwraca referencję.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 2: Konstruktory -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div>
+          <div class="section-title">Konstruktory 🏗️</div>
+          <div class="section-sub">Specjalna metoda wywoływana przy tworzeniu obiektu</div>
+        </div>
+      </div>
+
+      <p>Konstruktor ma tę samą nazwę co klasa i <strong>nie ma typu zwracanego</strong>. Może być kilka konstruktorów (różne parametry).</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — rodzaje konstruktorów</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Point</span> {
+    <span class="kw">private double</span> x, y;
+
+    <span class="cmt">// 1. Bezargumentowy — wartości domyślne</span>
+    <span class="kw">public</span> <span class="cls">Point</span>() {
+        <span class="kw">this</span>.x = <span class="num">0</span>;
+        <span class="kw">this</span>.y = <span class="num">0</span>;
+    }
+
+    <span class="cmt">// 2. Z parametrami — ustawia wartości</span>
+    <span class="kw">public</span> <span class="cls">Point</span>(<span class="kw">double</span> x, <span class="kw">double</span> y) {
+        <span class="kw">this</span>.x = x;   <span class="cmt">// this.x = pole, x = parametr</span>
+        <span class="kw">this</span>.y = y;
+    }
+
+    <span class="cmt">// 3. Kopiujący — tworzy niezależną kopię innego obiektu</span>
+    <span class="kw">public</span> <span class="cls">Point</span>(<span class="cls">Point</span> other) {
+        <span class="kw">this</span>.x = other.x;
+        <span class="kw">this</span>.y = other.y;
+    }
+
+    <span class="cmt">// 4. Łańcuchowanie — this() woła inny konstruktor tej samej klasy</span>
+    <span class="kw">public</span> <span class="cls">Point</span>(<span class="kw">double</span> x) {
+        <span class="kw">this</span>(x, <span class="num">0</span>);   <span class="cmt">// musi być PIERWSZA linia</span>
+    }
+}</pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>Konstruktor kopiujący to <strong>głęboka kopia</strong> — tworzy nowe obiekty, nie kopie referencji. Bez niego ktoś może modyfikować twój obiekt z zewnątrz przez referencję!</div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — głęboka vs płytka kopia tablicy</span>
+        </div>
+        <pre><span class="cmt">// PŁYTKA kopia — tablica nowa, ale obiekty w środku te same!</span>
+<span class="kw">this</span>.points = <span class="typ">Arrays</span>.<span class="met">copyOf</span>(other.points, other.points.length);
+
+<span class="cmt">// GŁĘBOKA kopia — każdy punkt to zupełnie nowy, niezależny obiekt</span>
+<span class="kw">this</span>.points = <span class="kw">new</span> <span class="cls">Point</span>[other.points.length];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; other.points.length; i++) {
+    <span class="kw">this</span>.points[i] = <span class="kw">new</span> <span class="cls">Point</span>(other.points[i]); <span class="cmt">// konstruktor kopiujący</span>
+}
+
+<span class="cmt">// super() — wywołanie konstruktora klasy nadrzędnej (musi być PIERWSZA linia)</span>
+<span class="kw">public</span> <span class="cls">Polygon</span>(<span class="cls">Point</span>[] points, <span class="cls">Style</span> style) {
+    <span class="kw">super</span>(style);   <span class="cmt">// wołamy konstruktor Shape(style)</span>
+    <span class="kw">this</span>.points = ...;
+}</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 3: Akcesory i mutatory -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div>
+          <div class="section-title">Akcesory i mutatory (gettery/settery) 🔁</div>
+          <div class="section-sub">Kontrolowany dostęp do prywatnych pól</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — gettery i settery</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Person</span> {
+    <span class="kw">private</span> <span class="typ">String</span> name;
+    <span class="kw">private int</span> age;
+
+    <span class="cmt">// Akcesor (getter) — zwraca wartość pola</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">getName</span>() { <span class="kw">return this</span>.name; }
+    <span class="kw">public int</span>    <span class="met">getAge</span>()  { <span class="kw">return this</span>.age; }
+
+    <span class="cmt">// Mutator (setter) — ustawia wartość pola (z opcjonalną walidacją)</span>
+    <span class="kw">public void</span> <span class="met">setName</span>(<span class="typ">String</span> name) {
+        <span class="kw">if</span> (name == <span class="kw">null</span> || name.<span class="met">isBlank</span>())
+            <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(<span class="str">"Imię nie może być puste"</span>);
+        <span class="kw">this</span>.name = name;
+    }
+
+    <span class="cmt">// Getter obiektu mutowalnego — zwróć KOPIĘ, nie oryginał!</span>
+    <span class="kw">private</span> <span class="cls">Point</span> position;
+    <span class="kw">public</span> <span class="cls">Point</span> <span class="met">getPosition</span>() {
+        <span class="kw">return new</span> <span class="cls">Point</span>(<span class="kw">this</span>.position);  <span class="cmt">// kopia — nie oryginał</span>
+    }
+}</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div>Klasa <strong>niemutowalna</strong> (immutable) — tylko gettery, żadnych setterów. Po utworzeniu obiektu nikt nie może zmienić jego stanu. Przykład: <code>String</code>, <code>LocalDate</code>, wszystkie rekordy.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 4: Modyfikatory dostępu -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div>
+          <div class="section-title">Modyfikatory dostępu 🔐</div>
+          <div class="section-sub">Kto może widzieć co</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Modyfikator</th><th>Ta klasa</th><th>Podklasy</th><th>Pakiet</th><th>Wszędzie</th><th>Kiedy używać</th></tr></thead>
+          <tbody>
+            <tr><td><code>public</code></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>metody API, konstruktory, stałe</td></tr>
+            <tr><td><code>protected</code></td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>pola w klasach abstrakcyjnych dostępne w podklasach</td></tr>
+            <tr><td><code>private</code></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>prawie wszystkie pola</td></tr>
+            <tr><td><em>(brak)</em></td><td>✅</td><td>❌</td><td>✅</td><td>❌</td><td>rzadko używany — tylko w pakiecie</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout good">
+        <span class="callout-icon">✅</span>
+        <div><strong>Zasada minimum uprawnień:</strong> zawsze dawaj najniższy możliwy poziom dostępu. Jeśli nie wiesz — <code>private</code>. Otwierasz tylko to, co celowo chcesz udostępnić.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 5: Dziedziczenie -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div>
+          <div class="section-title">Dziedziczenie 🧬</div>
+          <div class="section-sub">Klasa potomna przejmuje cechy rodzica</div>
+        </div>
+      </div>
+
+      <p>Słowo kluczowe <code>extends</code> — klasa dziedziczy pola i metody z klasy nadrzędnej. Java pozwala dziedziczyć tylko po <strong>jednej klasie</strong> (ale implementować wiele interfejsów).</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — hierarchia klas Shape → Polygon → SolidFilledPolygon</span>
+        </div>
+        <pre><span class="kw">public abstract class</span> <span class="cls">Shape</span> {
+    <span class="kw">protected</span> <span class="cls">Style</span> style;   <span class="cmt">// protected — widoczne w podklasach</span>
+
+    <span class="kw">public</span> <span class="cls">Shape</span>(<span class="cls">Style</span> style) { <span class="kw">this</span>.style = style; }
+
+    <span class="kw">public abstract</span> <span class="typ">String</span> <span class="met">toSvg</span>();  <span class="cmt">// musi być zaimplementowana</span>
+}
+
+<span class="kw">public class</span> <span class="cls">Polygon</span> <span class="kw">extends</span> <span class="cls">Shape</span> {
+    <span class="kw">private</span> <span class="cls">Point</span>[] points;
+
+    <span class="kw">public</span> <span class="cls">Polygon</span>(<span class="cls">Point</span>[] points, <span class="cls">Style</span> style) {
+        <span class="kw">super</span>(style);          <span class="cmt">// ← MUSI być pierwszą linią</span>
+        <span class="kw">this</span>.points = points;
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">toSvg</span>() { <span class="kw">return</span> <span class="str">"&lt;polygon .../&gt;"</span>; }
+}
+
+<span class="kw">public class</span> <span class="cls">SolidFilledPolygon</span> <span class="kw">extends</span> <span class="cls">Polygon</span> {
+    <span class="kw">private</span> <span class="typ">String</span> color;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">toSvg</span>() {
+        <span class="kw">return super</span>.<span class="met">toSvg</span>() + <span class="str">" fill=\""</span> + color + <span class="str">"\""</span>;
+        <span class="cmt">// super.toSvg() — wywołuje metodę rodzica</span>
+    }
+}</pre>
+      </div>
+
+      <div class="grid2">
+        <div class="mini-card">
+          <div class="mini-card-title">super() — konstruktor</div>
+          Wywołuje konstruktor klasy nadrzędnej. Musi być <strong>pierwszą linią</strong> konstruktora.
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">@Override</div>
+          Informuje kompilator, że nadpisujesz metodę rodzica. Nie obowiązkowe, ale jeśli popełnisz literówkę — kompilator wyłapie błąd.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 6: Klasy abstrakcyjne -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div>
+          <div class="section-title">Klasy abstrakcyjne 👻</div>
+          <div class="section-sub">Szablon którego nie możesz zinstancjonować bezpośrednio</div>
+        </div>
+      </div>
+
+      <p>Klasa abstrakcyjna może mieć metody abstrakcyjne (bez ciała) i zwykłe (z ciałem). Nie można jej użyć przez <code>new Shape()</code> — tylko przez podklasy.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — klasa abstrakcyjna</span>
+        </div>
+        <pre><span class="kw">public abstract class</span> <span class="cls">Shape</span> {
+    <span class="kw">protected</span> <span class="cls">Style</span> style;
+
+    <span class="kw">public</span> <span class="cls">Shape</span>(<span class="cls">Style</span> style) { <span class="kw">this</span>.style = style; }
+
+    <span class="cmt">// abstrakcyjna — brak ciała, podklasa MUSI ją zaimplementować</span>
+    <span class="kw">public abstract</span> <span class="typ">String</span> <span class="met">toSvg</span>();
+
+    <span class="cmt">// zwykła — ma ciało, podklasa MOŻE nadpisać</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">describe</span>() { <span class="kw">return</span> <span class="str">"Figura geometryczna"</span>; }
+}
+
+<span class="cmt">// ❌ Błąd kompilacji!</span>
+<span class="cls">Shape</span> s = <span class="kw">new</span> <span class="cls">Shape</span>(style);   <span class="cmt">// nie można tworzyć instancji klasy abstrakcyjnej</span>
+
+<span class="cmt">// ✅ Poprawnie — przez podklasę</span>
+<span class="cls">Shape</span> s = <span class="kw">new</span> <span class="cls">Polygon</span>(points, style);</pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Klasa abstrakcyjna</th><th>Interfejs</th></tr></thead>
+          <tbody>
+            <tr><td>Pola</td><td>tak (w tym <code>protected</code>)</td><td>tylko stałe (<code>public static final</code>)</td></tr>
+            <tr><td>Konstruktor</td><td>tak</td><td>nie</td></tr>
+            <tr><td>Wielodziedziczenie</td><td>tylko jedna klasa abstrakcyjna</td><td>wiele interfejsów naraz</td></tr>
+            <tr><td>Metody z ciałem</td><td>tak</td><td>tylko <code>default</code></td></tr>
+            <tr><td>Kiedy użyć</td><td>gdy klasy dzielą <strong>stan</strong> i <strong>logikę</strong></td><td>gdy definiujesz <strong>kontrakt</strong> (co robi, nie jak)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 7: Interfejsy -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div>
+          <div class="section-title">Interfejsy 📋</div>
+          <div class="section-sub">Kontrakt — klasa musi dostarczyć wszystkich metod</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — interfejs i implementacja</span>
+        </div>
+        <pre><span class="cmt">// Definicja interfejsu</span>
+<span class="kw">public interface</span> <span class="cls">Shape</span> {
+    <span class="typ">String</span> <span class="met">toSvg</span>(<span class="typ">String</span> params);  <span class="cmt">// metoda bez ciała — MUSI być zaimplementowana</span>
+
+    <span class="cmt">// metoda domyślna (default) — ma ciało, klasa może (nie musi) nadpisać</span>
+    <span class="kw">default</span> <span class="typ">String</span> <span class="met">toSvg</span>() { <span class="kw">return</span> <span class="met">toSvg</span>(<span class="str">""</span>); }
+}
+
+<span class="cmt">// Klasa implementuje interfejs</span>
+<span class="kw">public class</span> <span class="cls">Polygon</span> <span class="kw">implements</span> <span class="cls">Shape</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">toSvg</span>(<span class="typ">String</span> params) {
+        <span class="kw">return</span> <span class="typ">String</span>.<span class="met">format</span>(<span class="str">"&lt;polygon points=\"%s\" %s /&gt;"</span>, pointsStr, params);
+    }
+}
+
+<span class="cmt">// Klasa może implementować WIELE interfejsów</span>
+<span class="kw">public class</span> <span class="cls">Person</span> <span class="kw">implements</span> <span class="cls">Comparable</span>&lt;<span class="cls">Person</span>&gt;, <span class="cls">Serializable</span> { ... }
+
+<span class="cmt">// Interfejs Comparable — sortowanie własnych obiektów</span>
+<span class="kw">public class</span> <span class="cls">Person</span> <span class="kw">implements</span> <span class="cls">Comparable</span>&lt;<span class="cls">Person</span>&gt; {
+    <span class="ann">@Override</span>
+    <span class="kw">public int</span> <span class="met">compareTo</span>(<span class="cls">Person</span> other) {
+        <span class="kw">return this</span>.birthday.<span class="met">compareTo</span>(other.birthday);
+        <span class="cmt">// ujemna = this jest "mniejszy", 0 = równe, dodatnia = this "większy"</span>
+    }
+}</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div>Interfejsy funkcyjne (z jedną metodą abstrakcyjną) możesz zastąpić <strong>lambdą</strong>. Np. <code>Comparator&lt;T&gt;</code>, <code>Runnable</code>, <code>Predicate&lt;T&gt;</code>.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 8: Polimorfizm -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div>
+          <div class="section-title">Polimorfizm 🎭</div>
+          <div class="section-sub">Jeden typ — różne zachowanie zależnie od obiektu</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — polimorfizm i rzutowanie</span>
+        </div>
+        <pre><span class="cmt">// Lista heterogeniczna — różne typy, wszystkie są Shape</span>
+<span class="typ">List</span>&lt;<span class="cls">Shape</span>&gt; shapes = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+shapes.<span class="met">add</span>(<span class="kw">new</span> <span class="cls">Polygon</span>(...));
+shapes.<span class="met">add</span>(<span class="kw">new</span> <span class="cls">Ellipse</span>(...));
+shapes.<span class="met">add</span>(<span class="kw">new</span> <span class="cls">Circle</span>(...));
+
+<span class="cmt">// Każdy wywołuje SWOJĄ wersję toSvg() — Java decyduje w runtime</span>
+<span class="kw">for</span> (<span class="cls">Shape</span> s : shapes) {
+    System.out.<span class="met">println</span>(s.<span class="met">toSvg</span>());  <span class="cmt">// polimorficzne wywołanie</span>
+}
+
+<span class="cmt">// instanceof — sprawdź rzeczywisty typ obiektu</span>
+<span class="kw">if</span> (s <span class="kw">instanceof</span> <span class="cls">Polygon</span> polygon) {   <span class="cmt">// Java 16+ pattern matching</span>
+    polygon.<span class="met">getPoints</span>();              <span class="cmt">// dostęp do metod Polygon</span>
+}
+
+<span class="cmt">// Stara składnia rzutowania</span>
+<span class="kw">if</span> (s <span class="kw">instanceof</span> <span class="cls">Polygon</span>) {
+    <span class="cls">Polygon</span> polygon = (<span class="cls">Polygon</span>) s;   <span class="cmt">// explicit cast</span>
+}</pre>
+      </div>
+
+      <div class="callout good">
+        <span class="callout-icon">✅</span>
+        <div>Polimorfizm działa bo Java w czasie działania (<em>runtime</em>) sprawdza <strong>rzeczywisty typ</strong> obiektu, nie typ zmiennej. <code>Shape s = new Polygon(...)</code> — zmienna jest typu Shape, obiekt jest Polygon. Przy wywołaniu <code>s.toSvg()</code> wywoła się <code>Polygon.toSvg()</code>.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 9: Kolekcje -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <div>
+          <div class="section-title">Kolekcje — List, Set, Map 🗂️</div>
+          <div class="section-sub">Struktury danych zamiast tablic</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Typ</th><th>Implementacja</th><th>Cechy</th><th>Kiedy używać</th></tr></thead>
+          <tbody>
+            <tr><td><code>List&lt;T&gt;</code></td><td><code>ArrayList</code></td><td>zachowuje kolejność, duplikaty OK, dostęp po indeksie O(1)</td><td>lista osób, kolejka elementów</td></tr>
+            <tr><td><code>List&lt;T&gt;</code></td><td><code>LinkedList</code></td><td>szybkie dodawanie na początku/końcu, wolny dostęp po indeksie</td><td>kolejka, deque</td></tr>
+            <tr><td><code>Set&lt;T&gt;</code></td><td><code>HashSet</code></td><td>brak duplikatów, brak kolejności, szybkie contains()</td><td>zbiór unikalnych elementów</td></tr>
+            <tr><td><code>Set&lt;T&gt;</code></td><td><code>LinkedHashSet</code></td><td>brak duplikatów, zachowuje kolejność wstawiania</td><td>gdy ważna kolejność i unikalność</td></tr>
+            <tr><td><code>Map&lt;K,V&gt;</code></td><td><code>HashMap</code></td><td>pary klucz→wartość, klucz unikalny, szybki dostęp</td><td>słownik, lookup po ID</td></tr>
+            <tr><td><code>Map&lt;K,V&gt;</code></td><td><code>LinkedHashMap</code></td><td>jak HashMap ale zachowuje kolejność wstawiania</td><td>ranking, cache LRU</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — najczęstsze operacje na kolekcjach</span>
+        </div>
+        <pre><span class="cmt">// ── LIST ──</span>
+<span class="typ">List</span>&lt;<span class="cls">Person</span>&gt; people = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+people.<span class="met">add</span>(person);            <span class="cmt">// dodaj na koniec</span>
+people.<span class="met">add</span>(<span class="num">0</span>, person);         <span class="cmt">// dodaj na indeks 0</span>
+people.<span class="met">get</span>(<span class="num">0</span>);                 <span class="cmt">// pobierz po indeksie</span>
+people.<span class="met">remove</span>(<span class="num">0</span>);             <span class="cmt">// usuń po indeksie</span>
+people.<span class="met">size</span>();                 <span class="cmt">// rozmiar</span>
+people.<span class="met">contains</span>(person);      <span class="cmt">// czy zawiera</span>
+people.<span class="met">isEmpty</span>();             <span class="cmt">// czy pusta</span>
+people.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">naturalOrder</span>()); <span class="cmt">// sortuj</span>
+
+<span class="cmt">// ── SET ──</span>
+<span class="typ">Set</span>&lt;<span class="cls">Person</span>&gt; set = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;&gt;();
+<span class="kw">boolean</span> added = set.<span class="met">add</span>(p);    <span class="cmt">// true = dodano, false = już było</span>
+set.<span class="met">contains</span>(p);               <span class="cmt">// O(1) sprawdzenie</span>
+
+<span class="cmt">// ── MAP ──</span>
+<span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="cls">Person</span>&gt; map = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
+map.<span class="met">put</span>(<span class="str">"jan"</span>, jan);          <span class="cmt">// dodaj / nadpisz</span>
+map.<span class="met">get</span>(<span class="str">"jan"</span>);               <span class="cmt">// pobierz (null jeśli brak)</span>
+map.<span class="met">getOrDefault</span>(<span class="str">"x"</span>, null);  <span class="cmt">// pobierz lub wartość domyślna</span>
+map.<span class="met">containsKey</span>(<span class="str">"jan"</span>);       <span class="cmt">// czy klucz istnieje</span>
+
+<span class="cmt">// Map z listami (wiele wartości pod jednym kluczem)</span>
+<span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="typ">List</span>&lt;<span class="cls">Person</span>&gt;&gt; grouped = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
+grouped.<span class="met">computeIfAbsent</span>(key, k -> <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;()).<span class="met">add</span>(person);</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 10: Comparable i Comparator -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <div>
+          <div class="section-title">Comparable i Comparator 🔢</div>
+          <div class="section-sub">Jak sortować własne obiekty</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="mini-card">
+          <div class="mini-card-title">Comparable — sortowanie naturalne</div>
+          Klasa implementuje <code>compareTo()</code> — jeden domyślny porządek na zawsze. Sortuj: <code>Collections.sort(list)</code>.
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">Comparator — sortowanie na żądanie</div>
+          Osobna lambda/klasa porównująca dwa obiekty — wiele różnych porządków. Sortuj: <code>list.sort(comparator)</code>.
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — wzorce sortowania</span>
+        </div>
+        <pre><span class="cmt">// naturalny porządek (wymaga implements Comparable)</span>
+list.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">naturalOrder</span>());
+
+<span class="cmt">// odwrócony</span>
+list.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">reverseOrder</span>());
+
+<span class="cmt">// po konkretnym polu</span>
+list.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getBirthday</span>));
+
+<span class="cmt">// malejąco po polu</span>
+list.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getBirthday</span>).<span class="met">reversed</span>());
+
+<span class="cmt">// wielokryteryjne — najpierw po nazwisku, potem imieniu</span>
+list.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getSurname</span>)
+                   .<span class="met">thenComparing</span>(<span class="cls">Person</span>::<span class="met">getName</span>));
+
+<span class="cmt">// lambda — od najstarszego</span>
+list.<span class="met">sort</span>((a, b) -> a.<span class="met">getBirthday</span>().<span class="met">compareTo</span>(b.<span class="met">getBirthday</span>()));</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 11: Wyjątki -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <div>
+          <div class="section-title">Wyjątki 💥</div>
+          <div class="section-sub">Obsługa błędów w elegancki sposób</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Typ</th><th>Opis</th><th>Trzeba obsłużyć?</th><th>Przykład</th></tr></thead>
+          <tbody>
+            <tr><td><code>Exception</code></td><td>sprawdzany (checked)</td><td>✅ tak — <code>throws</code> lub <code>try-catch</code></td><td>własny <code>NegativeLifespanException</code></td></tr>
+            <tr><td><code>RuntimeException</code></td><td>niesprawdzany (unchecked)</td><td>❌ nie musisz</td><td><code>NullPointerException</code>, <code>IllegalArgumentException</code></td></tr>
+            <tr><td><code>Error</code></td><td>błąd JVM</td><td>❌ nie łap</td><td><code>OutOfMemoryError</code>, <code>StackOverflowError</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — własny wyjątek, rzucanie i łapanie</span>
+        </div>
+        <pre><span class="cmt">// Definicja własnego wyjątku</span>
+<span class="kw">public class</span> <span class="cls">NegativeLifespanException</span> <span class="kw">extends</span> <span class="cls">Exception</span> {
+    <span class="kw">public</span> <span class="cls">NegativeLifespanException</span>(<span class="typ">String</span> name, <span class="typ">LocalDate</span> birth, <span class="typ">LocalDate</span> death) {
+        <span class="kw">super</span>(<span class="str">"Osoba "</span> + name + <span class="str">" ma śmierć przed urodzinami: "</span> + birth + <span class="str">" → "</span> + death);
+    }
+}
+
+<span class="cmt">// Rzucanie — deklaruj throws w sygnaturze</span>
+<span class="kw">public void</span> <span class="met">setDeath</span>(<span class="typ">LocalDate</span> death) <span class="kw">throws</span> <span class="cls">NegativeLifespanException</span> {
+    <span class="kw">if</span> (death.<span class="met">isBefore</span>(birth)) {
+        <span class="kw">throw new</span> <span class="cls">NegativeLifespanException</span>(name, birth, death);
+    }
+    <span class="kw">this</span>.death = death;
+}
+
+<span class="cmt">// Łapanie — try-catch-finally</span>
+<span class="kw">try</span> {
+    <span class="cls">Person</span> p = <span class="cls">Person</span>.<span class="met">fromCsvLine</span>(line);
+} <span class="kw">catch</span> (<span class="cls">NegativeLifespanException</span> e) {
+    System.out.<span class="met">println</span>(<span class="str">"Błąd: "</span> + e.<span class="met">getMessage</span>());
+} <span class="kw">catch</span> (<span class="cls">NumberFormatException</span> e) {
+    System.out.<span class="met">println</span>(<span class="str">"Zły format liczby"</span>);
+} <span class="kw">finally</span> {
+    <span class="cmt">// wykona się zawsze — np. zamknij plik</span>
+}
+
+<span class="cmt">// try-with-resources — auto-zamknięcie (implements AutoCloseable)</span>
+<span class="kw">try</span> (<span class="typ">BufferedReader</span> br = <span class="typ">Files</span>.<span class="met">newBufferedReader</span>(<span class="typ">Path</span>.<span class="met">of</span>(path))) {
+    <span class="cmt">// br zostanie automatycznie zamknięty</span>
+}</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 12: String API -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <div>
+          <div class="section-title">String API 📝</div>
+          <div class="section-sub">Najważniejsze metody na tekście — używane wszędzie</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>String jest niemutowalny!</strong> Każda metoda (np. <code>replace()</code>, <code>toUpperCase()</code>) zwraca <strong>nowy</strong> String — nie modyfikuje istniejącego. Zawsze przypisz wynik: <code>s = s.trim();</code></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metoda</th><th>Co robi</th><th>Przykład</th></tr></thead>
+          <tbody>
+            <tr><td><code>length()</code></td><td>liczba znaków</td><td><code>"hello".length() → 5</code></td></tr>
+            <tr><td><code>charAt(i)</code></td><td>znak na pozycji i</td><td><code>"abc".charAt(1) → 'b'</code></td></tr>
+            <tr><td><code>substring(a, b)</code></td><td>fragment [a, b)</td><td><code>"hello".substring(1,3) → "el"</code></td></tr>
+            <tr><td><code>split(regex)</code></td><td>dzieli na tablicę</td><td><code>"a,b,c".split(",") → ["a","b","c"]</code></td></tr>
+            <tr><td><code>trim()</code></td><td>usuwa spacje z początku i końca</td><td><code>" hi ".trim() → "hi"</code></td></tr>
+            <tr><td><code>isBlank()</code></td><td>czy pusta lub same spacje</td><td><code>"  ".isBlank() → true</code></td></tr>
+            <tr><td><code>equals(s)</code></td><td>porównanie zawartości</td><td><code>"abc".equals("abc") → true</code></td></tr>
+            <tr><td><code>equalsIgnoreCase(s)</code></td><td>porównanie bez wielkości liter</td><td><code>"Abc".equalsIgnoreCase("ABC")</code></td></tr>
+            <tr><td><code>contains(s)</code></td><td>czy zawiera podstring</td><td><code>"hello world".contains("world")</code></td></tr>
+            <tr><td><code>startsWith(s)</code></td><td>czy zaczyna się od</td><td><code>"img.png".startsWith("img")</code></td></tr>
+            <tr><td><code>replace(a, b)</code></td><td>zamień wszystkie wystąpienia</td><td><code>"aa".replace("a","b") → "bb"</code></td></tr>
+            <tr><td><code>toUpperCase()</code></td><td>wielkie litery</td><td><code>"hello".toUpperCase() → "HELLO"</code></td></tr>
+            <tr><td><code>toLowerCase()</code></td><td>małe litery</td><td><code>"HELLO".toLowerCase() → "hello"</code></td></tr>
+            <tr><td><code>String.format()</code></td><td>formatowanie</td><td><code>String.format("%.2f", 3.14159) → "3.14"</code></td></tr>
+            <tr><td><code>Integer.parseInt(s)</code></td><td>String → int</td><td><code>Integer.parseInt("42") → 42</code></td></tr>
+            <tr><td><code>String.valueOf(n)</code></td><td>int → String</td><td><code>String.valueOf(42) → "42"</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — StringBuilder i formatowanie</span>
+        </div>
+        <pre><span class="cmt">// StringBuilder — gdy sklejasz wiele fragmentów w pętli (wydajne)</span>
+<span class="typ">StringBuilder</span> sb = <span class="kw">new</span> <span class="typ">StringBuilder</span>();
+<span class="kw">for</span> (<span class="cls">Point</span> p : points) {
+    sb.<span class="met">append</span>(p.x).<span class="met">append</span>(<span class="str">","</span>).<span class="met">append</span>(p.y).<span class="met">append</span>(<span class="str">" "</span>);
+}
+<span class="typ">String</span> result = sb.<span class="met">toString</span>();
+
+<span class="cmt">// String.format — czytelne formatowanie liczb i tekstu</span>
+<span class="typ">String</span> svg = <span class="typ">String</span>.<span class="met">format</span>(<span class="str">"&lt;circle cx=\"%.2f\" cy=\"%.2f\" r=\"%d\"/&gt;"</span>, x, y, radius);
+
+<span class="cmt">// Porównywanie — ZAWSZE equals(), nie ==</span>
+<span class="typ">String</span> a = <span class="kw">new</span> <span class="typ">String</span>(<span class="str">"hello"</span>);
+<span class="typ">String</span> b = <span class="kw">new</span> <span class="typ">String</span>(<span class="str">"hello"</span>);
+a == b;          <span class="cmt">// false — różne obiekty w pamięci</span>
+a.<span class="met">equals</span>(b);   <span class="cmt">// true — ta sama zawartość</span></pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 13: equals i toString -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <div>
+          <div class="section-title">equals(), hashCode() i toString() 🪪</div>
+          <div class="section-sub">Trzy metody które każda klasa powinna mieć</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — equals, hashCode, toString</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">Point</span> {
+    <span class="kw">private double</span> x, y;
+
+    <span class="cmt">// equals — porównanie zawartości (nie referencji)</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> <span class="met">equals</span>(<span class="typ">Object</span> obj) {
+        <span class="kw">if</span> (<span class="kw">this</span> == obj) <span class="kw">return true</span>;           <span class="cmt">// ta sama referencja</span>
+        <span class="kw">if</span> (!(obj <span class="kw">instanceof</span> <span class="cls">Point</span> other)) <span class="kw">return false</span>;
+        <span class="kw">return</span> <span class="typ">Double</span>.<span class="met">compare</span>(x, other.x) == <span class="num">0</span>
+            &amp;&amp; <span class="typ">Double</span>.<span class="met">compare</span>(y, other.y) == <span class="num">0</span>;
+    }
+
+    <span class="cmt">// hashCode — ZAWSZE razem z equals! Ten sam equals → ten sam hashCode</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public int</span> <span class="met">hashCode</span>() {
+        <span class="kw">return</span> <span class="typ">Objects</span>.<span class="met">hash</span>(x, y);
+    }
+
+    <span class="cmt">// toString — czytelna reprezentacja obiektu (używana przy println)</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">toString</span>() {
+        <span class="kw">return</span> <span class="typ">String</span>.<span class="met">format</span>(<span class="str">"Point(%.2f, %.2f)"</span>, x, y);
+    }
+}
+
+<span class="cmt">// Użycie</span>
+<span class="cls">Point</span> p1 = <span class="kw">new</span> <span class="cls">Point</span>(<span class="num">1</span>, <span class="num">2</span>);
+<span class="cls">Point</span> p2 = <span class="kw">new</span> <span class="cls">Point</span>(<span class="num">1</span>, <span class="num">2</span>);
+p1 == p2;           <span class="cmt">// false — różne obiekty</span>
+p1.<span class="met">equals</span>(p2);    <span class="cmt">// true — ta sama zawartość</span>
+System.out.<span class="met">println</span>(p1);  <span class="cmt">// "Point(1.00, 2.00)" — wywołuje toString()</span></pre>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>Jeśli nadpisujesz <code>equals()</code>, <strong>musisz</strong> nadpisać też <code>hashCode()</code>! Inaczej obiekty "równe" przez equals() będą się różnić jako klucze w <code>HashMap</code> i <code>HashSet</code>.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 14: Optional -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s14">
+      <div class="section-header">
+        <div class="section-num">14</div>
+        <div>
+          <div class="section-title">Optional — elegancka alternatywa dla null 📦</div>
+          <div class="section-sub">Bezpieczne operacje gdy wartość może nie istnieć</div>
+        </div>
+      </div>
+
+      <p><code>Optional&lt;T&gt;</code> to pojemnik który albo zawiera wartość, albo jest pusty. Zmusza cię do jawnej obsługi braku wartości — eliminuje <code>NullPointerException</code>.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Optional</span>
+        </div>
+        <pre><span class="cmt">// Tworzenie</span>
+<span class="typ">Optional</span>&lt;<span class="cls">Person</span>&gt; found = <span class="typ">Optional</span>.<span class="met">of</span>(person);       <span class="cmt">// nie-null — rzuca wyjątek gdy null</span>
+<span class="typ">Optional</span>&lt;<span class="cls">Person</span>&gt; empty = <span class="typ">Optional</span>.<span class="met">empty</span>();           <span class="cmt">// pusty</span>
+<span class="typ">Optional</span>&lt;<span class="cls">Person</span>&gt; maybe = <span class="typ">Optional</span>.<span class="met">ofNullable</span>(result); <span class="cmt">// może być null</span>
+
+<span class="cmt">// Pobieranie wartości</span>
+found.<span class="met">isPresent</span>();          <span class="cmt">// true jeśli ma wartość</span>
+found.<span class="met">isEmpty</span>();            <span class="cmt">// true jeśli pusty</span>
+found.<span class="met">get</span>();               <span class="cmt">// zwraca wartość (rzuca wyjątek jeśli pusty!)</span>
+found.<span class="met">orElse</span>(<span class="kw">null</span>);        <span class="cmt">// wartość lub domyślna</span>
+found.<span class="met">orElseThrow</span>(() -> <span class="kw">new</span> <span class="cls">RuntimeException</span>(<span class="str">"Brak!"</span>));
+
+<span class="cmt">// Typowe użycie ze Stream — findFirst(), min(), max() zwracają Optional</span>
+<span class="typ">Optional</span>&lt;<span class="cls">Person</span>&gt; oldest = people.<span class="met">stream</span>()
+    .<span class="met">filter</span>(p -> p.<span class="met">getDeathDate</span>() == <span class="kw">null</span>)
+    .<span class="met">min</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getBirthday</span>));
+
+oldest.<span class="met">ifPresent</span>(p -> System.out.<span class="met">println</span>(<span class="str">"Najstarsza: "</span> + p.<span class="met">getName</span>()));</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 15: Wzorzec Dekorator -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s15">
+      <div class="section-header">
+        <div class="section-num">15</div>
+        <div>
+          <div class="section-title">Wzorzec Dekorator 🎀</div>
+          <div class="section-sub">Opakowuj obiekt i rozszerzaj jego zachowanie</div>
+        </div>
+      </div>
+
+      <p>Dekorator opakowuje obiekt i dodaje mu nowe funkcje bez zmiany oryginalnej klasy. Dekoratory można układać w stos.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Dekorator</span>
+        </div>
+        <pre><span class="cmt">// Bazowy dekorator — implementuje interfejs i trzyma dekorowany obiekt</span>
+<span class="kw">public class</span> <span class="cls">ShapeDecorator</span> <span class="kw">implements</span> <span class="cls">Shape</span> {
+    <span class="kw">protected</span> <span class="cls">Shape</span> decoratedShape;
+
+    <span class="kw">public</span> <span class="cls">ShapeDecorator</span>(<span class="cls">Shape</span> shape) {
+        <span class="kw">this</span>.decoratedShape = shape;
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">toSvg</span>(<span class="typ">String</span> params) {
+        <span class="kw">return</span> decoratedShape.<span class="met">toSvg</span>(params);  <span class="cmt">// deleguj dalej</span>
+    }
+}
+
+<span class="cmt">// Konkretny dekorator — dodaje kolor wypełnienia</span>
+<span class="kw">public class</span> <span class="cls">SolidFillDecorator</span> <span class="kw">extends</span> <span class="cls">ShapeDecorator</span> {
+    <span class="kw">private</span> <span class="typ">String</span> color;
+
+    <span class="kw">public</span> <span class="cls">SolidFillDecorator</span>(<span class="cls">Shape</span> shape, <span class="typ">String</span> color) {
+        <span class="kw">super</span>(shape);
+        <span class="kw">this</span>.color = color;
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="met">toSvg</span>(<span class="typ">String</span> params) {
+        <span class="kw">return</span> decoratedShape.<span class="met">toSvg</span>(
+            <span class="typ">String</span>.<span class="met">format</span>(<span class="str">"fill=\"%s\" %s"</span>, color, params));
+    }
+}
+
+<span class="cmt">// Użycie — dekoratory układamy w stos</span>
+<span class="cls">Shape</span> polygon = <span class="kw">new</span> <span class="cls">Polygon</span>(...);
+<span class="cls">Shape</span> filled  = <span class="kw">new</span> <span class="cls">SolidFillDecorator</span>(polygon, <span class="str">"red"</span>);
+<span class="cls">Shape</span> stroked = <span class="kw">new</span> <span class="cls">StrokeDecorator</span>(filled, <span class="str">"black"</span>, <span class="num">2.0</span>);</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 16: Wzorzec Builder -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s16">
+      <div class="section-header">
+        <div class="section-num">16</div>
+        <div>
+          <div class="section-title">Wzorzec Builder 🏛️</div>
+          <div class="section-sub">Buduj obiekt krok po kroku, łańcuchując wywołania</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Builder (łańcuchowanie przez return this)</span>
+        </div>
+        <pre><span class="kw">public class</span> <span class="cls">PersonBuilder</span> {
+    <span class="kw">private</span> <span class="typ">String</span> name;
+    <span class="kw">private</span> <span class="kw">int</span> age;
+    <span class="kw">private</span> <span class="typ">String</span> email;
+
+    <span class="kw">public</span> <span class="cls">PersonBuilder</span> <span class="met">name</span>(<span class="typ">String</span> name) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">return this</span>;   <span class="cmt">// ← kluczowe! zwraca siebie → łańcuchowanie</span>
+    }
+    <span class="kw">public</span> <span class="cls">PersonBuilder</span> <span class="met">age</span>(<span class="kw">int</span> age)    { <span class="kw">this</span>.age = age;     <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="cls">PersonBuilder</span> <span class="met">email</span>(<span class="typ">String</span> e) { <span class="kw">this</span>.email = e;     <span class="kw">return this</span>; }
+
+    <span class="kw">public</span> <span class="cls">Person</span> <span class="met">build</span>() {
+        <span class="kw">return new</span> <span class="cls">Person</span>(name, age, email);  <span class="cmt">// tworzy gotowy obiekt</span>
+    }
+}
+
+<span class="cmt">// Użycie — czytelne łańcuchowanie</span>
+<span class="cls">Person</span> p = <span class="kw">new</span> <span class="cls">PersonBuilder</span>()
+    .<span class="met">name</span>(<span class="str">"Ada"</span>)
+    .<span class="met">age</span>(<span class="num">25</span>)
+    .<span class="met">email</span>(<span class="str">"ada@example.com"</span>)
+    .<span class="met">build</span>();</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div>Builder często jest klasą wewnętrzną (<code>static class Builder</code> wewnątrz klasy produktu). Wtedy użycie wygląda: <code>new Person.Builder().name("Ada").build()</code>.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 17: Wzorzec Observer -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s17">
+      <div class="section-header">
+        <div class="section-num">17</div>
+        <div>
+          <div class="section-title">Wzorzec Observer (Obserwator) 👀</div>
+          <div class="section-sub">Automatyczne powiadamianie o zmianach stanu</div>
+        </div>
+      </div>
+
+      <p>Observer to wzorzec <strong>zdarzenie → reakcja</strong>. Obiekt (Subject) trzyma listę obserwatorów i powiadamia ich gdy coś się zmieni. Używany np. w GUI, evencie gry, systemach powiadomień.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Observer z interfejsem funkcyjnym</span>
+        </div>
+        <pre><span class="cmt">// Interfejs obserwatora — może być lambdą!</span>
+<span class="kw">public interface</span> <span class="cls">GameObserver</span> {
+    <span class="kw">void</span> <span class="met">onEvent</span>(<span class="typ">String</span> event);
+}
+
+<span class="cmt">// Subject — trzyma listę obserwatorów i notyfikuje</span>
+<span class="kw">public class</span> <span class="cls">Game</span> {
+    <span class="kw">private</span> <span class="typ">List</span>&lt;<span class="cls">GameObserver</span>&gt; observers = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="met">addObserver</span>(<span class="cls">GameObserver</span> obs) { observers.<span class="met">add</span>(obs); }
+    <span class="kw">public void</span> <span class="met">removeObserver</span>(<span class="cls">GameObserver</span> obs) { observers.<span class="met">remove</span>(obs); }
+
+    <span class="kw">private void</span> <span class="met">notify</span>(<span class="typ">String</span> event) {
+        <span class="kw">for</span> (<span class="cls">GameObserver</span> obs : observers) obs.<span class="met">onEvent</span>(event);
+    }
+
+    <span class="kw">public void</span> <span class="met">playerScored</span>(<span class="typ">String</span> player) {
+        <span class="cmt">// ... logika ...</span>
+        <span class="met">notify</span>(<span class="str">"SCORE:"</span> + player);  <span class="cmt">// powiadom wszystkich</span>
+    }
+}
+
+<span class="cmt">// Użycie — obserwator jako lambda</span>
+<span class="cls">Game</span> game = <span class="kw">new</span> <span class="cls">Game</span>();
+game.<span class="met">addObserver</span>(event -> System.out.<span class="met">println</span>(<span class="str">"[LOG] "</span> + event));
+game.<span class="met">addObserver</span>(event -> gui.<span class="met">updateScoreboard</span>(event));
+
+<span class="cmt">// Wariant z Consumer (standardowy interfejs funkcyjny)</span>
+<span class="kw">private</span> <span class="typ">List</span>&lt;<span class="typ">Consumer</span>&lt;<span class="typ">String</span>&gt;&gt; listeners = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+<span class="kw">public void</span> <span class="met">addListener</span>(<span class="typ">Consumer</span>&lt;<span class="typ">String</span>&gt; l) { listeners.<span class="met">add</span>(l); }
+<span class="kw">private void</span> <span class="met">fire</span>(<span class="typ">String</span> msg) { listeners.<span class="met">forEach</span>(l -> l.<span class="met">accept</span>(msg)); }</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 18: Generyki -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s18">
+      <div class="section-header">
+        <div class="section-num">18</div>
+        <div>
+          <div class="section-title">Generyki — typy szablonowe 🔧</div>
+          <div class="section-sub">Jeden kod działający dla dowolnego typu</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — klasa generyczna, metoda generyczna, ograniczenia</span>
+        </div>
+        <pre><span class="cmt">// Klasa generyczna — T to placeholder na typ</span>
+<span class="kw">public class</span> <span class="cls">Pair</span>&lt;A, B&gt; {
+    <span class="kw">private</span> A first;
+    <span class="kw">private</span> B second;
+
+    <span class="kw">public</span> <span class="cls">Pair</span>(A first, B second) { <span class="kw">this</span>.first = first; <span class="kw">this</span>.second = second; }
+    <span class="kw">public</span> A <span class="met">getFirst</span>()  { <span class="kw">return</span> first; }
+    <span class="kw">public</span> B <span class="met">getSecond</span>() { <span class="kw">return</span> second; }
+}
+
+<span class="cmt">// Metoda generyczna — T deklarujesz przed typem zwracanym</span>
+<span class="kw">public static</span> &lt;T&gt; <span class="typ">List</span>&lt;T&gt; <span class="met">filterByClass</span>(<span class="typ">List</span>&lt;?&gt; list, <span class="typ">Class</span>&lt;T&gt; clazz) {
+    <span class="typ">List</span>&lt;T&gt; result = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+    <span class="kw">for</span> (<span class="typ">Object</span> obj : list) {
+        <span class="kw">if</span> (clazz.<span class="met">isInstance</span>(obj)) result.<span class="met">add</span>(clazz.<span class="met">cast</span>(obj));
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="cmt">// Ograniczenie — T musi być podtypem Comparable</span>
+<span class="kw">public static</span> &lt;T <span class="kw">extends</span> <span class="typ">Comparable</span>&lt;T&gt;&gt; T <span class="met">max</span>(<span class="typ">List</span>&lt;T&gt; list) {
+    <span class="kw">return</span> list.<span class="met">stream</span>().<span class="met">max</span>(<span class="typ">Comparator</span>.<span class="met">naturalOrder</span>()).<span class="met">orElseThrow</span>();
+}
+
+<span class="cmt">// Wildcard — ? gdy nie wiesz jaki typ (tylko czytasz, nie piszesz)</span>
+<span class="kw">public void</span> <span class="met">printAll</span>(<span class="typ">List</span>&lt;?&gt; list) {
+    list.<span class="met">forEach</span>(System.out::println);
+}</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 19: Stream i Lambda -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s19">
+      <div class="section-header">
+        <div class="section-num">19</div>
+        <div>
+          <div class="section-title">Stream API i lambdy ⚡</div>
+          <div class="section-sub">Przetwarzanie kolekcji w stylu funkcyjnym</div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div>Lambda to skrócona funkcja anonimowa: <code>(parametry) -> wyrażenie</code>. Interfejsy funkcyjne (<code>Predicate</code>, <code>Function</code>, <code>Consumer</code>, <code>Comparator</code>) mogą być lambdami.</div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — lambdy i interfejsy funkcyjne</span>
+        </div>
+        <pre><span class="cmt">// Predicate — warunek (true/false)</span>
+<span class="typ">Predicate</span>&lt;<span class="cls">Person</span>&gt; isAlive    = p -> p.<span class="met">getDeathDate</span>() == <span class="kw">null</span>;
+<span class="typ">Predicate</span>&lt;<span class="cls">Person</span>&gt; isAdult    = p -> p.<span class="met">getAge</span>() &gt;= <span class="num">18</span>;
+<span class="typ">Predicate</span>&lt;<span class="cls">Person</span>&gt; isAliveAdult = isAlive.<span class="met">and</span>(isAdult); <span class="cmt">// łączenie</span>
+
+<span class="cmt">// Function — przekształcenie A → B</span>
+<span class="typ">Function</span>&lt;<span class="typ">String</span>, <span class="kw">Integer</span>&gt; strLen = s -> s.<span class="met">length</span>();
+
+<span class="cmt">// Consumer — konsumuje, nic nie zwraca</span>
+<span class="typ">Consumer</span>&lt;<span class="cls">Person</span>&gt; printName = p -> System.out.<span class="met">println</span>(p.<span class="met">getName</span>());
+
+<span class="cmt">// Method reference — skrót dla prostych lambd</span>
+people.<span class="met">forEach</span>(System.out::println);       <span class="cmt">// zamiast p -> System.out.println(p)</span>
+people.<span class="met">sort</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getName</span>)); <span class="cmt">// metoda instancji</span></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — Stream API — pełne przykłady</span>
+        </div>
+        <pre><span class="cmt">// Żyjące osoby posortowane po urodzinach</span>
+<span class="typ">List</span>&lt;<span class="cls">Person</span>&gt; alive = people.<span class="met">stream</span>()
+    .<span class="met">filter</span>(p -> p.<span class="met">getDeathDate</span>() == <span class="kw">null</span>)
+    .<span class="met">sorted</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getBirthday</span>))
+    .<span class="met">collect</span>(<span class="typ">Collectors</span>.<span class="met">toList</span>());
+
+<span class="cmt">// Najstarsza żyjąca osoba</span>
+<span class="typ">Optional</span>&lt;<span class="cls">Person</span>&gt; oldest = people.<span class="met">stream</span>()
+    .<span class="met">filter</span>(p -> p.<span class="met">getDeathDate</span>() == <span class="kw">null</span>)
+    .<span class="met">min</span>(<span class="typ">Comparator</span>.<span class="met">comparing</span>(<span class="cls">Person</span>::<span class="met">getBirthday</span>));
+
+<span class="cmt">// Top-n malejąco, przekształć w imiona</span>
+<span class="typ">List</span>&lt;<span class="typ">String</span>&gt; topNames = stats.<span class="met">stream</span>()
+    .<span class="met">sorted</span>((a, b) -> b.<span class="met">getScore</span>() - a.<span class="met">getScore</span>())
+    .<span class="met">limit</span>(n)
+    .<span class="met">map</span>(<span class="cls">Person</span>::<span class="met">getName</span>)
+    .<span class="met">collect</span>(<span class="typ">Collectors</span>.<span class="met">toList</span>());</pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Operacja</th><th>Typ</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><code>.filter(predicate)</code></td><td>pośrednia</td><td>zostawia elementy spełniające warunek</td></tr>
+            <tr><td><code>.map(function)</code></td><td>pośrednia</td><td>przekształca każdy element</td></tr>
+            <tr><td><code>.sorted(comparator)</code></td><td>pośrednia</td><td>sortuje strumień</td></tr>
+            <tr><td><code>.distinct()</code></td><td>pośrednia</td><td>usuwa duplikaty</td></tr>
+            <tr><td><code>.limit(n)</code></td><td>pośrednia</td><td>bierze pierwsze n elementów</td></tr>
+            <tr><td><code>.skip(n)</code></td><td>pośrednia</td><td>pomija pierwsze n elementów</td></tr>
+            <tr><td><code>.peek(consumer)</code></td><td>pośrednia</td><td>podgląd (np. do debugowania)</td></tr>
+            <tr><td><code>.collect(toList())</code></td><td>terminalna</td><td>zbiera do listy</td></tr>
+            <tr><td><code>.count()</code></td><td>terminalna</td><td>zlicza elementy</td></tr>
+            <tr><td><code>.min() / .max()</code></td><td>terminalna</td><td>minimum / maksimum → Optional</td></tr>
+            <tr><td><code>.findFirst()</code></td><td>terminalna</td><td>pierwszy element → Optional</td></tr>
+            <tr><td><code>.anyMatch(pred)</code></td><td>terminalna</td><td>czy jakikolwiek pasuje</td></tr>
+            <tr><td><code>.forEach(consumer)</code></td><td>terminalna</td><td>wykonaj dla każdego</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 20: Pliki -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s20">
+      <div class="section-header">
+        <div class="section-num">20</div>
+        <div>
+          <div class="section-title">Pliki — odczyt i zapis 📁</div>
+          <div class="section-sub">BufferedReader, PrintWriter, serializacja</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — czytanie i zapis pliku tekstowego</span>
+        </div>
+        <pre><span class="cmt">// ── CZYTANIE — linia po linii ──</span>
+<span class="kw">try</span> (<span class="typ">BufferedReader</span> br = <span class="typ">Files</span>.<span class="met">newBufferedReader</span>(<span class="typ">Path</span>.<span class="met">of</span>(path))) {
+    <span class="typ">String</span> line;
+    <span class="kw">while</span> ((line = br.<span class="met">readLine</span>()) != <span class="kw">null</span>) {
+        <span class="typ">String</span>[] parts = line.<span class="met">split</span>(<span class="str">","</span>);  <span class="cmt">// split po przecinku (CSV)</span>
+        <span class="typ">String</span>[] tsv   = line.<span class="met">split</span>(<span class="str">"\t"</span>); <span class="cmt">// split po tabulatorze (TSV)</span>
+    }
+} <span class="kw">catch</span> (<span class="typ">IOException</span> e) {
+    e.<span class="met">printStackTrace</span>();
+}
+
+<span class="cmt">// Alternatywnie — cały plik naraz jako lista linii</span>
+<span class="typ">List</span>&lt;<span class="typ">String</span>&gt; lines = <span class="typ">Files</span>.<span class="met">readAllLines</span>(<span class="typ">Path</span>.<span class="met">of</span>(path));
+
+<span class="cmt">// ── ZAPIS ──</span>
+<span class="kw">try</span> (<span class="typ">PrintWriter</span> pw = <span class="kw">new</span> <span class="typ">PrintWriter</span>(<span class="typ">Files</span>.<span class="met">newBufferedWriter</span>(<span class="typ">Path</span>.<span class="met">of</span>(path)))) {
+    pw.<span class="met">println</span>(<span class="str">"Nagłówek"</span>);
+    pw.<span class="met">printf</span>(<span class="str">"%.2f%n"</span>, value);  <span class="cmt">// %n = nowa linia (przenośne)</span>
+}
+
+<span class="cmt">// ── SERIALIZACJA — zapis obiektu do pliku binarnego ──</span>
+<span class="cmt">// Klasa musi implements Serializable!</span>
+<span class="kw">try</span> (<span class="typ">ObjectOutputStream</span> oos = <span class="kw">new</span> <span class="typ">ObjectOutputStream</span>(<span class="kw">new</span> <span class="typ">FileOutputStream</span>(path))) {
+    oos.<span class="met">writeObject</span>(list);
+}
+<span class="kw">try</span> (<span class="typ">ObjectInputStream</span> ois = <span class="kw">new</span> <span class="typ">ObjectInputStream</span>(<span class="kw">new</span> <span class="typ">FileInputStream</span>(path))) {
+    <span class="typ">List</span>&lt;<span class="cls">Person</span>&gt; loaded = (<span class="typ">List</span>&lt;<span class="cls">Person</span>&gt;) ois.<span class="met">readObject</span>();
+}</pre>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">📖</span>
+        <div><strong>Statyczna metoda wytwórcza z pliku CSV</strong> to bardzo częsty wzorzec na kolokwium:<br>
+        <code>public static Person fromCsvLine(String line) throws ... { return new Person(...); }</code></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 21: Rekordy -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s21">
+      <div class="section-header">
+        <div class="section-num">21</div>
+        <div>
+          <div class="section-title">Rekordy (record) i metody wytwórcze 🪄</div>
+          <div class="section-sub">Niemutowalne nośniki danych i factory methods</div>
+        </div>
+      </div>
+
+      <p>Rekord to uproszczona niemutowalna klasa. Java automatycznie generuje: konstruktor, gettery (bez get!), <code>equals</code>, <code>hashCode</code>, <code>toString</code>.</p>
+
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">Java — record i static factory methods</span>
+        </div>
+        <pre><span class="cmt">// Rekord — zastępuje klasę z polami final</span>
+<span class="kw">public record</span> <span class="cls">Vec2</span>(<span class="kw">double</span> x, <span class="kw">double</span> y) {}
+
+<span class="kw">public record</span> <span class="cls">BoundingBox</span>(<span class="kw">double</span> x, <span class="kw">double</span> y, <span class="kw">double</span> width, <span class="kw">double</span> height) {}
+
+<span class="cmt">// Użycie — gettery to x(), y() (nie getX(), getY()!)</span>
+<span class="cls">Vec2</span> v = <span class="kw">new</span> <span class="cls">Vec2</span>(<span class="num">3.0</span>, <span class="num">4.0</span>);
+v.x();    <span class="cmt">// 3.0</span>
+v.y();    <span class="cmt">// 4.0</span>
+
+<span class="cmt">// Statyczna metoda wytwórcza — czytelna alternatywa dla konstruktora</span>
+<span class="kw">public static</span> <span class="cls">Polygon</span> <span class="met">square</span>(<span class="cls">Segment</span> diagonal, <span class="cls">Style</span> style) {
+    <span class="cmt">// oblicz 4 punkty kwadratu z przekątnej...</span>
+    <span class="kw">return new</span> <span class="cls">Polygon</span>(points, style);
+}
+
+<span class="kw">public static</span> <span class="cls">Person</span> <span class="met">fromCsvLine</span>(<span class="typ">String</span> line) {
+    <span class="typ">String</span>[] parts = line.<span class="met">split</span>(<span class="str">","</span>);
+    <span class="kw">return new</span> <span class="cls">Person</span>(parts[<span class="num">0</span>], parts[<span class="num">1</span>], <span class="typ">LocalDate</span>.<span class="met">parse</span>(parts[<span class="num">2</span>]));
+}
+
+<span class="cmt">// Użycie — nazwa mówi co robi</span>
+<span class="cls">Polygon</span> sq = <span class="cls">Polygon</span>.<span class="met">square</span>(segment, style);
+<span class="cls">Person</span>  p  = <span class="cls">Person</span>.<span class="met">fromCsvLine</span>(<span class="str">"Jan,Kowalski,1990-01-15"</span>);</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SEKCJA 22: Co powtórzyć -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s22">
+      <div class="section-header">
+        <div class="section-num">✦</div>
+        <div>
+          <div class="section-title">Co powtórzyć przed kolokwium 🎯</div>
+          <div class="section-sub">Priorytety według częstości na egzaminach</div>
+        </div>
+      </div>
+
+      <h3>🔴 Krytyczne — fundament OOP</h3>
+      <ul class="checklist">
+        <li><strong>Klasa z polami private + konstruktor + gettery</strong> — schemat każdej klasy <span class="badge crit">★★★</span></li>
+        <li><strong>extends + super() + @Override</strong> — dziedziczenie i nadpisywanie <span class="badge crit">★★★</span></li>
+        <li><strong>abstract class vs interface</strong> — kiedy które i dlaczego <span class="badge crit">★★★</span></li>
+        <li><strong>implements Comparable + compareTo()</strong> — sortowanie własnych obiektów <span class="badge crit">★★★</span></li>
+        <li><strong>List / Set / Map + najczęstsze metody</strong> — add, get, put, contains, size <span class="badge crit">★★★</span></li>
+        <li><strong>try-catch + własny wyjątek extends Exception</strong> — obsługa błędów <span class="badge crit">★★★</span></li>
+      </ul>
+
+      <h3>🟡 Ważne — pojawia się regularnie</h3>
+      <ul class="checklist">
+        <li><strong>Stream: .filter().sorted().map().collect()</strong> — przetwarzanie list <span class="badge imp">★★☆</span></li>
+        <li><strong>Konstruktor kopiujący + głęboka kopia</strong> — hermetyzacja <span class="badge imp">★★☆</span></li>
+        <li><strong>equals() + hashCode() razem</strong> — kontrakt Java <span class="badge imp">★★☆</span></li>
+        <li><strong>Wzorzec Dekorator</strong> — ShapeDecorator, układanie w stos <span class="badge imp">★★☆</span></li>
+        <li><strong>Wzorzec Builder</strong> — return this w każdej metodzie <span class="badge imp">★★☆</span></li>
+        <li><strong>Optional — orElse, ifPresent</strong> — bezpieczne null <span class="badge imp">★★☆</span></li>
+        <li><strong>String: split, equals, format, isBlank</strong> — parsowanie danych <span class="badge imp">★★☆</span></li>
+      </ul>
+
+      <h3>🟢 Przydatne — do wyższych ocen</h3>
+      <ul class="checklist">
+        <li><strong>Generyki: &lt;T&gt;, &lt;T extends Comparable&gt;</strong> — szablony klas i metod <span class="badge nice">★☆☆</span></li>
+        <li><strong>record — kompaktowe niemutowalne klasy</strong> — gettery x() nie getX() <span class="badge nice">★☆☆</span></li>
+        <li><strong>Wzorzec Observer</strong> — lista listenerów + Consumer/interfejs funkcyjny <span class="badge nice">★☆☆</span></li>
+        <li><strong>Statyczna metoda wytwórcza (fromCsvLine, square)</strong> <span class="badge nice">★☆☆</span></li>
+        <li><strong>Serializacja — implements Serializable + ObjectOutputStream</strong> <span class="badge nice">★☆☆</span></li>
+      </ul>
+
+      <div class="callout tip" style="margin-top:24px">
+        <span class="callout-icon">🦋</span>
+        <div><strong>Złota rada:</strong> Ta notatka to Część 1 — podstawy OOP. Przed kolokwium przejrzyj też <a href="Notatka_K2_Java_ze_Swing.html" style="color:var(--purple-deep);font-weight:800">Notatka K2</a> z serwerami TCP, SQLite, JavaFX i Swing. Obie notatki razem = pełny materiał.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  Zrobione z <span class="heart">♥</span> na podstawie laborek UMCS · Java OOP · Kolokwium 1
+  <br>Powodzenia na kolokwium! 🦋✨
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
